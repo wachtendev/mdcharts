@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mdchart/schemas/statcard.schema.json",
+  "title": "mdchart stat card fragment",
+  "description": "The JSON body of a ```statcard fenced code block: an array of single-KPI cards rendered as a row.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["label", "value"],
+    "properties": {
+      "label": { "type": "string", "description": "What the number is, e.g. 'Revenue (MTD)'." },
+      "value": {
+        "type": ["string", "number"],
+        "description": "The number itself, pre-formatted if it needs a unit/currency, e.g. '€51,200' or 1205."
+      },
+      "delta": {
+        "type": "string",
+        "description": "A signed comparison, e.g. '+8.1%' or '-3.2%'. Colors green/red by sign automatically -- omit `tone` when using this."
+      },
+      "tone": {
+        "type": "string",
+        "enum": ["success", "warn", "danger", "neutral"],
+        "description": "Overrides the card's color for a value with no delta, e.g. a plain alert count that should read as urgent."
+      }
+    }
+  }
+}

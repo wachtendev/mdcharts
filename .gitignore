@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.vite/
+.DS_Store
+
+# Claude Design's seeded payload is a ~2MB generated bundle (editor code +
+# these .dc.html sources baked in) -- the .dc.html files and canvas.json
+# under design/ are the real source; re-seed the payload from those.
+design/merchant-agent-design.html
+
+# Visual-verification harness output (test-visual/render.mjs) -- regenerate
+# with: node --import ./test-visual/register-loader.mjs test-visual/render.mjs
+test-visual/out/

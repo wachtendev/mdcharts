@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>mdchart — all chart types, large datasets</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="/src/styles.css" />
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f6f5f2; }
+    md-chart-view {
+      display: block;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 6rem;
+    }
+    .mdchart-chart.mdchart-wide { min-width: 0; }
+  </style>
+</head>
+<body>
+  <md-chart-view src="/demo/all-charts.md"></md-chart-view>
+  <script type="module">
+    import { defineMdChart } from '/src/index.ts'
+    defineMdChart()
+  </script>
+</body>
+</html>

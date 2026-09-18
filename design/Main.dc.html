@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    :root {
+      --paper: #f0eee6; --panel: #faf9f5; --ink: #201e1a; --ink-strong: #17140f;
+      --muted: #726c62; --hairline: #e3dfd2; --brand: #cc7752; --brand-2: #a8632f;
+      --brand-soft: #f3e2d6; --success: #45735a; --success-soft: #e6efe7;
+      --warn: #93641c; --warn-soft: #f4ead9; --danger: #a8402f; --danger-soft: #f5e2dd;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Public Sans", system-ui, sans-serif; color: var(--ink); background: var(--paper); }
+    .num { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+    .serif { font-family: "Source Serif 4", Georgia, serif; }
+    a { color: var(--brand); }
+    a:hover { color: var(--brand-2); }
+  </style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap">
+</helmet>
+
+<div style="width: 1440px; height: 900px; display: grid; grid-template-columns: 64px 1fr 380px; background: var(--paper); overflow: hidden;">
+
+  <div style="border-right: 1px solid var(--hairline); display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 0;">
+    <div style="width: 34px; height: 34px; border-radius: 9px; background: var(--ink-strong); color: var(--panel); display: flex; align-items: center; justify-content: center; font-weight: 600; margin-bottom: 8px;">M</div>
+    <div style="width: 38px; height: 38px; border-radius: 9px; background: var(--brand-soft); color: var(--brand); display: flex; align-items: center; justify-content: center;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h14V10"></path></svg>
+    </div>
+    <div style="width: 38px; height: 38px; border-radius: 9px; color: var(--muted); display: flex; align-items: center; justify-content: center;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="7" width="16" height="13" rx="1.5"></rect><path d="M8 7V5a4 4 0 018 0v2"></path></svg>
+    </div>
+    <div style="width: 38px; height: 38px; border-radius: 9px; color: var(--muted); display: flex; align-items: center; justify-content: center;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7l8-4 8 4-8 4-8-4z"></path><path d="M4 7v10l8 4 8-4V7"></path></svg>
+    </div>
+    <div style="width: 38px; height: 38px; border-radius: 9px; color: var(--muted); display: flex; align-items: center; justify-content: center;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c1.5-4 4-6 7-6s5.5 2 7 6"></path></svg>
+    </div>
+  </div>
+
+  <div style="padding: 40px 44px; overflow: hidden; display: flex; flex-direction: column; gap: 28px;">
+
+    <div>
+      <h1 style="font-size: 26px; font-weight: 700; margin: 0 0 6px; color: var(--ink-strong);">Good afternoon, Priya</h1>
+      <p style="margin: 0; color: var(--muted); font-size: 14px; max-width: 62ch;">Thursday, September 18 &middot; Revenue is up 8.1% this month and ahead of target. 3 orders and 2 listings need you today.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.7fr 1fr; gap: 20px;">
+
+      <div style="background: var(--panel); border: 1px solid var(--hairline); border-radius: 16px; padding: 26px 30px; display: flex; flex-direction: column; gap: 18px;">
+        <div style="display: flex; align-items: flex-end; justify-content: space-between;">
+          <div>
+            <div style="color: var(--muted); font-size: 13px; margin-bottom: 6px;">Revenue this month</div>
+            <div class="serif num" style="font-size: 44px; font-weight: 600; line-height: 1; color: var(--ink-strong);">&euro;51,200</div>
+          </div>
+          <div style="background: var(--success-soft); color: var(--success); font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 999px;">+8.1% vs target</div>
+        </div>
+        <svg width="100%" height="150" viewBox="0 0 620 150" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="rev-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#cc7752" stop-opacity="0.28"></stop>
+              <stop offset="100%" stop-color="#cc7752" stop-opacity="0"></stop>
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="118" x2="620" y2="118" stroke="#e3dfd2" stroke-width="1"></line>
+          <polyline points="10,90 110,78 210,84 310,60 410,68 510,36 610,18" fill="none" stroke="#726c62" stroke-width="1.4" stroke-dasharray="4 4"></polyline>
+          <path d="M10,100 110,88 210,94 310,68 410,76 510,44 610,26 610,140 10,140 Z" fill="url(#rev-fill)"></path>
+          <polyline points="10,100 110,88 210,94 310,68 410,76 510,44 610,26" fill="none" stroke="#cc7752" stroke-width="3"></polyline>
+          <circle cx="610" cy="26" r="5" fill="#cc7752"></circle>
+          <text x="8" y="136" font-family="IBM Plex Mono, monospace" font-size="11" fill="#726c62">Apr</text>
+          <text x="585" y="136" font-family="IBM Plex Mono, monospace" font-size="11" fill="#726c62">Sep</text>
+        </svg>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+
+        <div style="background: var(--panel); border: 1px solid var(--hairline); border-radius: 16px; padding: 18px 20px; display: flex; align-items: center; gap: 16px; flex: 1;">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#e3dfd2" stroke-width="7"></circle>
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#a8632f" stroke-width="7" stroke-linecap="round" stroke-dasharray="107 163" transform="rotate(-90 32 32)"></circle>
+            <text x="32" y="37" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="#17140f" font-weight="500">66%</text>
+          </svg>
+          <div>
+            <div class="num" style="font-size: 22px; font-weight: 700; color: var(--ink-strong);">1,205</div>
+            <div style="color: var(--muted); font-size: 13px;">Orders &middot; 66% to weekly goal</div>
+          </div>
+        </div>
+
+        <div style="background: var(--panel); border: 1px solid var(--hairline); border-radius: 16px; padding: 18px 20px; display: flex; align-items: center; gap: 16px; flex: 1;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--warn-soft); display: flex; align-items: center; justify-content: center; flex: none;">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#93641c" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16h.01"></path></svg>
+          </div>
+          <div>
+            <div class="num" style="font-size: 22px; font-weight: 700; color: var(--ink-strong);">42</div>
+            <div style="color: var(--muted); font-size: 13px;">Orders pending</div>
+          </div>
+        </div>
+
+        <div style="background: var(--danger-soft); border: 1px solid var(--hairline); border-radius: 16px; padding: 18px 20px; display: flex; align-items: center; gap: 16px; flex: 1;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--panel); display: flex; align-items: center; justify-content: center; flex: none;">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#a8402f" stroke-width="2"><path d="M12 9v4"></path><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"></path><path d="M12 17h.01"></path></svg>
+          </div>
+          <div>
+            <div class="num" style="font-size: 22px; font-weight: 700; color: var(--danger);">3</div>
+            <div style="color: #a8402f; font-size: 13px; font-weight: 500;">Payments failed &mdash; needs attention</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Needs you today</div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+
+        <div style="background: var(--panel); border: 1px solid var(--hairline); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="width: 34px; height: 34px; border-radius: 9px; background: var(--danger-soft); color: var(--danger); display: flex; align-items: center; justify-content: center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>
+          </div>
+          <div style="font-weight: 600; font-size: 14px;">3 orders failed payment</div>
+          <div style="color: var(--muted); font-size: 13px; flex: 1;">#4823, #4825, #4829 &middot; same card issuer, last hour</div>
+          <div style="display: inline-flex; align-self: flex-start; align-items: center; gap: 6px; border: 1px solid var(--hairline); border-radius: 999px; padding: 7px 14px; font-size: 13px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.6L19 9l-5.2 1.4L12 16l-1.8-5.6L5 9l5.2-1.4z"></path></svg>
+            Investigate
+          </div>
+        </div>
+
+        <div style="background: var(--panel); border: 1px solid var(--hairline); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="width: 34px; height: 34px; border-radius: 9px; background: var(--warn-soft); color: var(--warn); display: flex; align-items: center; justify-content: center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="13" rx="1.5"></rect><path d="M8 7V5a4 4 0 018 0v2"></path></svg>
+          </div>
+          <div style="font-weight: 600; font-size: 14px;">Fabrikam revenue down 3.2%</div>
+          <div style="color: var(--muted); font-size: 13px; flex: 1;">190 orders this week &middot; below the other three shops</div>
+          <div style="display: inline-flex; align-self: flex-start; align-items: center; gap: 6px; border: 1px solid var(--hairline); border-radius: 999px; padding: 7px 14px; font-size: 13px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.6L19 9l-5.2 1.4L12 16l-1.8-5.6L5 9l5.2-1.4z"></path></svg>
+            Draft note
+          </div>
+        </div>
+
+        <div style="background: var(--panel); border: 1px solid var(--hairline); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="width: 34px; height: 34px; border-radius: 9px; background: var(--warn-soft); color: var(--warn); display: flex; align-items: center; justify-content: center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7l8-4 8 4-8 4-8-4z"></path><path d="M4 7v10l8 4 8-4V7"></path></svg>
+          </div>
+          <div style="font-weight: 600; font-size: 14px;">Boots (AR-1002) sells out in 2 days</div>
+          <div style="color: var(--muted); font-size: 13px; flex: 1;">3 units left &middot; 52 sold in the last 30 days</div>
+          <div style="display: inline-flex; align-self: flex-start; align-items: center; gap: 6px; border: 1px solid var(--hairline); border-radius: 999px; padding: 7px 14px; font-size: 13px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.6L19 9l-5.2 1.4L12 16l-1.8-5.6L5 9l5.2-1.4z"></path></svg>
+            Draft restock
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div style="border-left: 1px solid var(--hairline); background: var(--panel); display: flex; flex-direction: column;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 16px 18px; border-bottom: 1px solid var(--hairline);">
+      <div style="width: 34px; height: 34px; border-radius: 9px; background: var(--brand); color: #fff; display: flex; align-items: center; justify-content: center;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.6L19 9l-5.2 1.4L12 16l-1.8-5.6L5 9l5.2-1.4z"></path></svg>
+      </div>
+      <div>
+        <div style="font-weight: 600; font-size: 14px;">Merchant Agent</div>
+        <div style="color: var(--muted); font-size: 12px;">You approve every change</div>
+      </div>
+    </div>
+
+    <div style="padding: 18px; overflow: hidden; flex: 1; display: flex; flex-direction: column; gap: 16px;">
+      <div style="display: flex; justify-content: flex-end;">
+        <div style="background: var(--ink-strong); color: var(--panel); border-radius: 16px 16px 4px 16px; padding: 10px 16px; max-width: 85%; font-size: 14px;">How's the business doing this month?</div>
+      </div>
+      <div style="font-size: 14px;">Revenue is up <strong>8.1%</strong> and ahead of target, driven by Northwind.</div>
+
+      <div style="border: 1px solid var(--hairline); border-radius: 12px; overflow: hidden; background: var(--paper);">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid var(--hairline);">
+          <span style="font-weight: 600; font-size: 13px;">Revenue &mdash; last 30 days</span>
+          <span style="display: inline-flex; align-items: center; gap: 4px; color: var(--brand); font-size: 12px; font-weight: 600;">
+            Full report
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"></path></svg>
+          </span>
+        </div>
+        <div style="padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 12px;"><span style="width: 8px; height: 8px; border-radius: 2px; background: var(--brand); flex: none;"></span><span style="color: var(--muted); flex: 1;">Northwind</span><span class="num" style="font-weight: 500;">&euro;21,504</span></div>
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 12px;"><span style="width: 8px; height: 8px; border-radius: 2px; background: var(--brand-2); flex: none;"></span><span style="color: var(--muted); flex: 1;">Acme</span><span class="num" style="font-weight: 500;">&euro;13,824</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 14px 16px; border-top: 1px solid var(--hairline);">
+      <div style="display: flex; align-items: center; background: var(--paper); border: 1px solid var(--hairline); border-radius: 999px; padding: 4px 4px 4px 16px;">
+        <div style="flex: 1; color: var(--muted); font-size: 14px;">Ask about sales, stock, pricing&hellip;</div>
+        <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--ink-strong); color: var(--panel); display: flex; align-items: center; justify-content: center;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,181 @@
+{
+  "name": "mdchart",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/mdchart.js",
+  "module": "./dist/mdchart.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/mdchart.js"
+    },
+    "./styles.css": "./dist/mdchart.css"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc -p tsconfig.json --emitDeclarationOnly",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "markdown-it": "^15.0.0"
+  },
+  "peerDependencies": {
+    "@sgratzl/chartjs-chart-boxplot": "^4.4.5",
+    "@shikijs/markdown-it": "^4.0.0",
+    "chart.js": "^4.4.0",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "chartjs-chart-error-bars": "^4.4.5",
+    "chartjs-chart-financial": "^0.2.1",
+    "chartjs-chart-funnel": "^4.2.5",
+    "chartjs-chart-geo": "^4.3.6",
+    "chartjs-chart-graph": "^4.3.5",
+    "chartjs-chart-matrix": "^3.1.0",
+    "chartjs-chart-pcp": "^4.3.5",
+    "chartjs-chart-sankey": "^0.19.1",
+    "chartjs-chart-treemap": "^4.2.2",
+    "chartjs-chart-venn": "^4.3.7",
+    "chartjs-chart-wordcloud": "^4.4.5",
+    "chartjs-plugin-annotation": "^3.1.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "chartjs-plugin-dragdata": "^2.3.1",
+    "chartjs-plugin-gradient": "^0.8.0",
+    "chartjs-plugin-hierarchical": "^4.4.5",
+    "chartjs-plugin-trendline": "^3.2.13",
+    "chartjs-plugin-zoom": "^2.2.0",
+    "date-fns": "^4.4.0",
+    "markdown-it-deflist": "^4.0.0",
+    "markdown-it-footnote": "^4.0.0",
+    "markdown-it-mathjax3": "^5.2.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "mermaid": "^11.0.0",
+    "shiki": "^4.0.0",
+    "world-atlas": "^2.0.2"
+  },
+  "peerDependenciesMeta": {
+    "shiki": {
+      "optional": true
+    },
+    "chartjs-adapter-date-fns": {
+      "optional": true
+    },
+    "date-fns": {
+      "optional": true
+    },
+    "@shikijs/markdown-it": {
+      "optional": true
+    },
+    "mermaid": {
+      "optional": true
+    },
+    "markdown-it-footnote": {
+      "optional": true
+    },
+    "markdown-it-task-lists": {
+      "optional": true
+    },
+    "markdown-it-deflist": {
+      "optional": true
+    },
+    "markdown-it-mathjax3": {
+      "optional": true
+    },
+    "chartjs-chart-sankey": {
+      "optional": true
+    },
+    "chartjs-chart-treemap": {
+      "optional": true
+    },
+    "chartjs-chart-matrix": {
+      "optional": true
+    },
+    "chartjs-chart-wordcloud": {
+      "optional": true
+    },
+    "chartjs-chart-funnel": {
+      "optional": true
+    },
+    "chartjs-chart-venn": {
+      "optional": true
+    },
+    "chartjs-chart-graph": {
+      "optional": true
+    },
+    "chartjs-chart-geo": {
+      "optional": true
+    },
+    "world-atlas": {
+      "optional": true
+    },
+    "@sgratzl/chartjs-chart-boxplot": {
+      "optional": true
+    },
+    "chartjs-chart-financial": {
+      "optional": true
+    },
+    "chartjs-chart-pcp": {
+      "optional": true
+    },
+    "chartjs-chart-error-bars": {
+      "optional": true
+    },
+    "chartjs-plugin-datalabels": {
+      "optional": true
+    },
+    "chartjs-plugin-annotation": {
+      "optional": true
+    },
+    "chartjs-plugin-zoom": {
+      "optional": true
+    },
+    "chartjs-plugin-trendline": {
+      "optional": true
+    },
+    "chartjs-plugin-gradient": {
+      "optional": true
+    },
+    "chartjs-plugin-hierarchical": {
+      "optional": true
+    },
+    "chartjs-plugin-dragdata": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@sgratzl/chartjs-chart-boxplot": "^4.4.5",
+    "@shikijs/markdown-it": "^4.0.0",
+    "canvas": "^3.2.3",
+    "chart.js": "^4.4.0",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "chartjs-chart-error-bars": "^4.4.5",
+    "chartjs-chart-financial": "^0.2.1",
+    "chartjs-chart-funnel": "^4.2.5",
+    "chartjs-chart-geo": "^4.3.6",
+    "chartjs-chart-graph": "^4.3.5",
+    "chartjs-chart-matrix": "^3.1.0",
+    "chartjs-chart-pcp": "^4.3.5",
+    "chartjs-chart-sankey": "^0.19.1",
+    "chartjs-chart-treemap": "^4.2.2",
+    "chartjs-chart-venn": "^4.3.7",
+    "chartjs-chart-wordcloud": "^4.4.5",
+    "chartjs-plugin-annotation": "^3.1.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "chartjs-plugin-dragdata": "^2.3.1",
+    "chartjs-plugin-gradient": "^0.8.0",
+    "chartjs-plugin-hierarchical": "^4.4.5",
+    "chartjs-plugin-trendline": "^3.2.13",
+    "chartjs-plugin-zoom": "^2.2.0",
+    "date-fns": "^4.4.0",
+    "jsdom": "^30.0.1",
+    "markdown-it-deflist": "^4.0.0",
+    "markdown-it-footnote": "^4.0.0",
+    "markdown-it-mathjax3": "^5.2.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "mermaid": "^11.0.0",
+    "shiki": "^4.0.0",
+    "typescript": "^5.6.0",
+    "vite": "^5.4.0",
+    "world-atlas": "^2.0.2"
+  }
+}

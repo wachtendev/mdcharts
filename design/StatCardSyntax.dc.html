@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    :root {
+      --paper: #f0eee6; --panel: #faf9f5; --ink: #201e1a; --ink-strong: #17140f;
+      --muted: #726c62; --hairline: #e3dfd2; --brand: #cc7752; --brand-2: #a8632f;
+      --success: #45735a; --success-soft: #e6efe7; --warn: #93641c; --warn-soft: #f4ead9;
+      --danger: #a8402f; --danger-soft: #f5e2dd; --code-bg: #17140f; --code-ink: #e9e4d8;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Public Sans", system-ui, sans-serif; color: var(--ink); background: var(--paper); }
+    .num { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+    .serif { font-family: "Source Serif 4", Georgia, serif; }
+    .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+  </style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap">
+</helmet>
+
+<div style="width: 980px; min-height: 720px; padding: 48px 56px; background: var(--paper); display: flex; flex-direction: column; gap: 28px;">
+
+  <div>
+    <h1 class="serif" style="font-size: 26px; font-weight: 600; margin: 0 0 8px; color: var(--ink-strong);">A stat card, proposed</h1>
+    <p style="margin: 0; color: var(--muted); font-size: 14px; max-width: 68ch;">A single KPI &mdash; value, label, comparison &mdash; as its own fence, the same way <code class="mono">&#96;&#96;&#96;chart</code> already works. No table row required for a number that deserves its own shape.</p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1.15fr; gap: 24px; align-items: start;">
+
+    <div>
+      <div style="color: var(--muted); font-size: 12px; font-weight: 600; margin-bottom: 8px;">You write</div>
+      <div style="background: var(--code-bg); border-radius: 12px; padding: 20px 22px; color: var(--code-ink); font-size: 12.5px; line-height: 1.65;" class="mono">
+        <div style="color: #a89e8d;">&#96;&#96;&#96;statcard</div>
+        <div>[</div>
+        <div>&nbsp;&nbsp;{ "label": "Revenue (MTD)",</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;"value": "&euro;51,200", "delta": "+8.1%" },</div>
+        <div>&nbsp;&nbsp;{ "label": "Orders", "value": 1205,</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;"delta": "+4.3%" },</div>
+        <div>&nbsp;&nbsp;{ "label": "Conversion", "value": "2.9%",</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;"delta": "+1.1%" },</div>
+        <div>&nbsp;&nbsp;{ "label": "Payments failed", "value": 3,</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;"tone": "danger" }</div>
+        <div>]</div>
+        <div style="color: #a89e8d;">&#96;&#96;&#96;</div>
+      </div>
+      <p style="color: var(--muted); font-size: 12.5px; margin: 14px 0 0;">Only <code class="mono">label</code> and <code class="mono">value</code> are required. <code class="mono">delta</code> colors and arrows itself from its sign; <code class="mono">tone</code> overrides that for a card with no delta, like a plain alert count.</p>
+    </div>
+
+    <div>
+      <div style="color: var(--muted); font-size: 12px; font-weight: 600; margin-bottom: 8px;">Renders as</div>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;">
+
+        <div style="background: var(--panel); border: 1px solid var(--hairline); border-radius: 12px; padding: 18px 20px;">
+          <div style="color: var(--muted); font-size: 12.5px; margin-bottom: 8px;">Revenue (MTD)</div>
+          <div style="display: flex; align-items: baseline; gap: 8px;">
+            <div class="serif num" style="font-size: 26px; font-weight: 600; color: var(--ink-strong);">&euro;51,200</div>
+            <div style="font-size: 12px; font-weight: 600; color: var(--success); background: var(--success-soft); padding: 2px 8px; border-radius: 999px;">+8.1%</div>
+          </div>
+        </div>
+
+        <div style="background: var(--panel); border: 1px solid var(--hairline); border-radius: 12px; padding: 18px 20px;">
+          <div style="color: var(--muted); font-size: 12.5px; margin-bottom: 8px;">Orders</div>
+          <div style="display: flex; align-items: baseline; gap: 8px;">
+            <div class="serif num" style="font-size: 26px; font-weight: 600; color: var(--ink-strong);">1,205</div>
+            <div style="font-size: 12px; font-weight: 600; color: var(--success); background: var(--success-soft); padding: 2px 8px; border-radius: 999px;">+4.3%</div>
+          </div>
+        </div>
+
+        <div style="background: var(--panel); border: 1px solid var(--hairline); border-radius: 12px; padding: 18px 20px;">
+          <div style="color: var(--muted); font-size: 12.5px; margin-bottom: 8px;">Conversion</div>
+          <div style="display: flex; align-items: baseline; gap: 8px;">
+            <div class="serif num" style="font-size: 26px; font-weight: 600; color: var(--ink-strong);">2.9%</div>
+            <div style="font-size: 12px; font-weight: 600; color: var(--success); background: var(--success-soft); padding: 2px 8px; border-radius: 999px;">+1.1%</div>
+          </div>
+        </div>
+
+        <div style="background: var(--danger-soft); border: 1px solid var(--hairline); border-radius: 12px; padding: 18px 20px;">
+          <div style="color: var(--danger); font-size: 12.5px; margin-bottom: 8px; font-weight: 500;">Payments failed</div>
+          <div class="serif num" style="font-size: 26px; font-weight: 600; color: var(--danger);">3</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

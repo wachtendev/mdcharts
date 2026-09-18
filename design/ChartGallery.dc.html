@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    :root {
+      --paper: #f0eee6; --panel: #faf9f5; --ink: #201e1a; --ink-strong: #17140f;
+      --muted: #726c62; --hairline: #e3dfd2; --brand: #cc7752; --brand-2: #a8632f; --brand-3: #e3ab84;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Public Sans", system-ui, sans-serif; color: var(--ink); background: var(--paper); }
+    .serif { font-family: "Source Serif 4", Georgia, serif; }
+    .tile { background: var(--panel); border: 1px solid var(--hairline); border-radius: 12px; padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 10px; }
+    .tile svg { width: 100%; height: 64px; display: block; }
+    .tile .lbl { font-size: 12.5px; color: var(--ink); font-weight: 500; }
+  </style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap">
+</helmet>
+
+<div style="width: 1280px; min-height: 1180px; padding: 48px 56px 64px; background: var(--paper); display: flex; flex-direction: column; gap: 34px;">
+
+  <div>
+    <h1 class="serif" style="font-size: 30px; font-weight: 600; margin: 0 0 8px; color: var(--ink-strong);">Every chart mdchart can draw</h1>
+    <p style="margin: 0; color: var(--muted); max-width: 68ch; font-size: 14px;">One JSON config, one <code>&#96;&#96;&#96;chart</code> fence &mdash; the model picks the type, the host supplies the color.</p>
+  </div>
+
+  <div>
+    <div style="font-weight: 600; font-size: 14px; margin-bottom: 14px;">Trend &amp; comparison</div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <rect x="12" y="26" width="12" height="24" fill="#cc7752"></rect><rect x="30" y="14" width="12" height="36" fill="#cc7752"></rect><rect x="48" y="30" width="12" height="20" fill="#cc7752"></rect><rect x="66" y="8" width="12" height="42" fill="#cc7752"></rect>
+        <line x1="8" y1="50" x2="90" y2="50" stroke="#e3dfd2"></line></svg><div class="lbl">Bar</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <polyline points="10,42 30,30 50,34 70,16 90,10" fill="none" stroke="#cc7752" stroke-width="2.5"></polyline>
+        <line x1="8" y1="50" x2="90" y2="50" stroke="#e3dfd2"></line></svg><div class="lbl">Line</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <polygon points="50,10 74,28 64,52 36,52 26,28" fill="none" stroke="#e3dfd2"></polygon>
+        <polygon points="50,18 66,30 58,44 42,44 34,30" fill="#cc7752" fill-opacity="0.35" stroke="#cc7752" stroke-width="1.5"></polygon></svg><div class="lbl">Radar</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <g transform="translate(50 32)">
+          <path d="M0,0 L18,-8 A20,20 0 0,1 8,18 Z" fill="#cc7752"></path>
+          <path d="M0,0 L8,18 A20,20 0 0,1 -16,10 Z" fill="#a8632f"></path>
+          <path d="M0,0 L-16,10 A20,20 0 0,1 -8,-18 Z" fill="#e3ab84"></path>
+          <path d="M0,0 L-8,-18 A20,20 0 0,1 18,-8 Z" fill="#e3dfd2"></path>
+        </g></svg><div class="lbl">Polar area</div></div>
+
+    </div>
+  </div>
+
+  <div>
+    <div style="font-weight: 600; font-size: 14px; margin-bottom: 14px;">Relationships &amp; spread</div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <line x1="10" y1="50" x2="90" y2="50" stroke="#e3dfd2"></line><line x1="10" y1="10" x2="10" y2="50" stroke="#e3dfd2"></line>
+        <circle cx="24" cy="38" r="3" fill="#cc7752"></circle><circle cx="40" cy="22" r="3" fill="#cc7752"></circle><circle cx="56" cy="34" r="3" fill="#cc7752"></circle><circle cx="70" cy="16" r="3" fill="#cc7752"></circle><circle cx="82" cy="28" r="3" fill="#cc7752"></circle></svg><div class="lbl">Scatter</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <line x1="10" y1="50" x2="90" y2="50" stroke="#e3dfd2"></line><line x1="10" y1="10" x2="10" y2="50" stroke="#e3dfd2"></line>
+        <circle cx="28" cy="36" r="6" fill="#cc7752" fill-opacity="0.7"></circle><circle cx="50" cy="24" r="10" fill="#cc7752" fill-opacity="0.5"></circle><circle cx="74" cy="32" r="4" fill="#cc7752" fill-opacity="0.8"></circle></svg><div class="lbl">Bubble</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <line x1="30" y1="10" x2="30" y2="50" stroke="#e3dfd2"></line>
+        <rect x="20" y="24" width="20" height="14" fill="#cc7752" fill-opacity="0.5" stroke="#cc7752"></rect>
+        <line x1="30" y1="24" x2="30" y2="12" stroke="#cc7752"></line><line x1="30" y1="38" x2="30" y2="48" stroke="#cc7752"></line>
+        <line x1="70" y1="14" x2="70" y2="46" stroke="#e3dfd2"></line>
+        <rect x="60" y="26" width="20" height="10" fill="#a8632f" fill-opacity="0.5" stroke="#a8632f"></rect></svg><div class="lbl">Boxplot / violin</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <circle cx="40" cy="30" r="20" fill="#cc7752" fill-opacity="0.45"></circle>
+        <circle cx="60" cy="30" r="20" fill="#a8632f" fill-opacity="0.45"></circle></svg><div class="lbl">Venn</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <line x1="20" y1="16" x2="50" y2="30" stroke="#e3dfd2"></line><line x1="50" y1="30" x2="80" y2="16" stroke="#e3dfd2"></line><line x1="50" y1="30" x2="30" y2="48" stroke="#e3dfd2"></line><line x1="50" y1="30" x2="70" y2="48" stroke="#e3dfd2"></line>
+        <circle cx="20" cy="16" r="5" fill="#cc7752"></circle><circle cx="80" cy="16" r="5" fill="#cc7752"></circle><circle cx="50" cy="30" r="6" fill="#a8632f"></circle><circle cx="30" cy="48" r="5" fill="#cc7752"></circle><circle cx="70" cy="48" r="5" fill="#cc7752"></circle></svg><div class="lbl">Graph</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <line x1="16" y1="8" x2="16" y2="52" stroke="#e3dfd2"></line><line x1="50" y1="8" x2="50" y2="52" stroke="#e3dfd2"></line><line x1="84" y1="8" x2="84" y2="52" stroke="#e3dfd2"></line>
+        <polyline points="16,18 50,40 84,14" fill="none" stroke="#cc7752" stroke-width="1.5"></polyline>
+        <polyline points="16,36 50,20 84,42" fill="none" stroke="#a8632f" stroke-width="1.5"></polyline></svg><div class="lbl">Parallel coordinates</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <line x1="10" y1="50" x2="90" y2="50" stroke="#e3dfd2"></line>
+        <rect x="18" y="26" width="14" height="24" fill="#cc7752"></rect><line x1="25" y1="16" x2="25" y2="34" stroke="#17140f"></line><line x1="21" y1="16" x2="29" y2="16" stroke="#17140f"></line><line x1="21" y1="34" x2="29" y2="34" stroke="#17140f"></line>
+        <rect x="44" y="18" width="14" height="32" fill="#cc7752"></rect><line x1="51" y1="10" x2="51" y2="24" stroke="#17140f"></line><line x1="47" y1="10" x2="55" y2="10" stroke="#17140f"></line><line x1="47" y1="24" x2="55" y2="24" stroke="#17140f"></line></svg><div class="lbl">Error bars</div></div>
+
+    </div>
+  </div>
+
+  <div>
+    <div style="font-weight: 600; font-size: 14px; margin-bottom: 14px;">Composition &amp; share</div>
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;">
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <g transform="translate(50 30)"><circle r="22" fill="none" stroke="#e3dfd2" stroke-width="10"></circle>
+        <circle r="22" fill="none" stroke="#cc7752" stroke-width="10" stroke-dasharray="60 138" transform="rotate(-90)"></circle>
+        <circle r="22" fill="none" stroke="#a8632f" stroke-width="10" stroke-dasharray="45 138" stroke-dashoffset="-60" transform="rotate(-90)"></circle></g></svg><div class="lbl">Pie / doughnut</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <rect x="8" y="8" width="46" height="30" fill="#cc7752"></rect><rect x="56" y="8" width="36" height="18" fill="#a8632f"></rect>
+        <rect x="56" y="28" width="20" height="24" fill="#e3ab84"></rect><rect x="78" y="28" width="14" height="24" fill="#e3dfd2"></rect>
+        <rect x="8" y="40" width="46" height="12" fill="#e3dfd2"></rect></svg><div class="lbl">Treemap</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <rect x="10" y="10" width="16" height="16" fill="#cc7752" opacity="0.3"></rect><rect x="28" y="10" width="16" height="16" fill="#cc7752" opacity="0.9"></rect><rect x="46" y="10" width="16" height="16" fill="#cc7752" opacity="0.5"></rect>
+        <rect x="10" y="28" width="16" height="16" fill="#cc7752" opacity="0.7"></rect><rect x="28" y="28" width="16" height="16" fill="#cc7752" opacity="0.2"></rect><rect x="46" y="28" width="16" height="16" fill="#cc7752" opacity="1"></rect></svg><div class="lbl">Matrix</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <text x="14" y="24" font-size="15" fill="#cc7752" font-weight="600" font-family="Public Sans, sans-serif">sale</text>
+        <text x="46" y="40" font-size="9" fill="#a8632f" font-family="Public Sans, sans-serif">boots</text>
+        <text x="12" y="46" font-size="8" fill="#726c62" font-family="Public Sans, sans-serif">gift</text>
+        <text x="60" y="20" font-size="11" fill="#e3ab84" font-family="Public Sans, sans-serif">lamp</text></svg><div class="lbl">Word cloud</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <path d="M14,10 H86 L66,30 H34 Z" fill="#cc7752"></path>
+        <path d="M34,30 H66 L58,42 H42 Z" fill="#a8632f"></path>
+        <path d="M42,42 H58 L54,52 H46 Z" fill="#e3ab84"></path></svg><div class="lbl">Funnel</div></div>
+
+    </div>
+  </div>
+
+  <div>
+    <div style="font-weight: 600; font-size: 14px; margin-bottom: 14px;">Geography &amp; finance</div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <rect x="8" y="10" width="26" height="18" rx="2" fill="#cc7752"></rect><rect x="38" y="30" width="20" height="16" rx="2" fill="#a8632f"></rect>
+        <rect x="62" y="14" width="30" height="22" rx="2" fill="#e3ab84"></rect><rect x="20" y="34" width="16" height="14" rx="2" fill="#e3dfd2"></rect></svg><div class="lbl">Choropleth map</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <rect x="8" y="10" width="26" height="18" rx="2" fill="#e3dfd2"></rect><rect x="38" y="30" width="20" height="16" rx="2" fill="#e3dfd2"></rect>
+        <rect x="62" y="14" width="30" height="22" rx="2" fill="#e3dfd2"></rect><rect x="20" y="34" width="16" height="14" rx="2" fill="#e3dfd2"></rect>
+        <circle cx="26" cy="20" r="4" fill="#cc7752"></circle><circle cx="50" cy="38" r="7" fill="#cc7752" fill-opacity="0.7"></circle><circle cx="76" cy="24" r="5.5" fill="#cc7752" fill-opacity="0.8"></circle><circle cx="30" cy="42" r="3" fill="#cc7752" fill-opacity="0.6"></circle></svg><div class="lbl">Bubble map</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <line x1="24" y1="10" x2="24" y2="46" stroke="#45735a"></line><rect x="18" y="20" width="12" height="16" fill="#45735a"></rect>
+        <line x1="48" y1="12" x2="48" y2="44" stroke="#a8402f"></line><rect x="42" y="24" width="12" height="12" fill="#a8402f"></rect>
+        <line x1="72" y1="8" x2="72" y2="40" stroke="#45735a"></line><rect x="66" y="14" width="12" height="18" fill="#45735a"></rect></svg><div class="lbl">Candlestick</div></div>
+
+      <div class="tile"><svg viewBox="0 0 100 60">
+        <path d="M8,16 C30,16 30,20 50,20 C70,20 70,12 92,12" fill="none" stroke="#cc7752" stroke-width="8" stroke-opacity="0.55"></path>
+        <path d="M8,32 C30,32 30,34 50,34 C70,34 70,44 92,44" fill="none" stroke="#a8632f" stroke-width="6" stroke-opacity="0.55"></path>
+        <path d="M8,48 C30,48 30,44 50,42 C70,40 70,28 92,28" fill="none" stroke="#e3ab84" stroke-width="5" stroke-opacity="0.55"></path></svg><div class="lbl">Sankey</div></div>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

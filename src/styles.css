@@ -1,0 +1,245 @@
+/* mdchart — base chrome tokens. Everything under --mdchart-brand-* is meant
+   to be overridden by the host's own CI; these are just sane light/dark
+   fallbacks so the component isn't unstyled out of the box. */
+
+.mdchart-root {
+  --mdchart-brand-1: #7c3aed;
+  --mdchart-brand-2: #0ea5e9;
+  --mdchart-brand-3: #14b8a6;
+  --mdchart-brand-4: #f59e0b;
+  --mdchart-surface: #ffffff;
+  --mdchart-panel: #f6f5f2;
+  --mdchart-text: #1c1b18;
+  --mdchart-text-muted: #6b6862;
+  --mdchart-grid: #dedbd3;
+  --mdchart-success: #2f6846;
+  --mdchart-warn: #8a5a12;
+  --mdchart-danger: #9a2340;
+
+  font-family: 'Public Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: var(--mdchart-text);
+  line-height: 1.55;
+  font-size: 14px;
+}
+
+.mdchart-root[data-theme='dark'],
+:root[data-theme='dark'] .mdchart-root {
+  --mdchart-surface: #171613;
+  --mdchart-panel: #201f1b;
+  --mdchart-text: #ece9e2;
+  --mdchart-text-muted: #a29e93;
+  --mdchart-grid: #35332c;
+  --mdchart-success: #4fae76;
+  --mdchart-warn: #d99a3d;
+  --mdchart-danger: #e0637f;
+}
+
+.mdchart-root :where(h1, h2, h3, h4) {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 1.6em 0 0.5em;
+}
+.mdchart-root h1 { font-size: 1.5rem; }
+.mdchart-root h2 { font-size: 1.2rem; }
+.mdchart-root h3 { font-size: 1.02rem; color: var(--mdchart-text-muted); }
+.mdchart-root p { max-width: 68ch; }
+.mdchart-root code { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.9em; }
+
+/* --- callouts --- */
+.mdchart-callout {
+  border-left: 3px solid var(--mdchart-grid);
+  padding: 0.6em 1em;
+  margin: 1em 0;
+  background: var(--mdchart-panel);
+}
+.mdchart-callout-warning, .mdchart-callout-warn { border-left-color: var(--mdchart-warn); }
+.mdchart-callout-danger, .mdchart-callout-error { border-left-color: var(--mdchart-danger); }
+.mdchart-callout-success, .mdchart-callout-tip { border-left-color: var(--mdchart-success); }
+.mdchart-callout-title { font-weight: 600; font-size: 0.9rem; }
+.mdchart-callout-content { color: var(--mdchart-text-muted); font-size: 0.92rem; }
+
+/* --- tables: the primary status/report surface --- */
+.mdchart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: 0.88rem;
+}
+.mdchart-table-wrap { overflow-x: auto; margin: 1em 0; }
+.mdchart-table th, .mdchart-table td {
+  padding: 0.5em 0.75em;
+  border-bottom: 1px solid var(--mdchart-grid);
+  text-align: left;
+  white-space: nowrap;
+}
+.mdchart-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--mdchart-surface);
+  color: var(--mdchart-text-muted);
+  font-weight: 500;
+  font-size: 0.78rem;
+}
+.mdchart-td-numeric {
+  text-align: right;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.mdchart-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.12em 0.6em;
+  border-radius: 3px;
+  font-size: 0.82em;
+  font-weight: 500;
+}
+.mdchart-tone-success { background: color-mix(in srgb, var(--mdchart-success) 14%, transparent); color: var(--mdchart-success); }
+.mdchart-tone-warn { background: color-mix(in srgb, var(--mdchart-warn) 14%, transparent); color: var(--mdchart-warn); }
+.mdchart-tone-danger { background: color-mix(in srgb, var(--mdchart-danger) 14%, transparent); color: var(--mdchart-danger); }
+.mdchart-td-numeric .mdchart-pill { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+
+/* --- stat cards --- */
+.mdchart-statcards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75em;
+  margin: 1.25em 0;
+}
+.mdchart-statcard {
+  border: 1px solid var(--mdchart-grid);
+  border-radius: 10px;
+  padding: 0.9em 1em;
+  background: var(--mdchart-panel);
+}
+.mdchart-statcard-label {
+  font-size: 0.8em;
+  color: var(--mdchart-text-muted);
+  margin-bottom: 0.5em;
+}
+.mdchart-statcard-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+}
+.mdchart-statcard-value {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.4em;
+  font-weight: 600;
+}
+.mdchart-statcard-delta {
+  font-size: 0.72em;
+  font-weight: 600;
+  padding: 0.15em 0.55em;
+  border-radius: 999px;
+}
+
+/* --- charts --- */
+.mdchart-chart {
+  position: relative;
+  height: 280px;
+  margin: 1.25em 0;
+}
+.mdchart-chart.mdchart-wide {
+  min-width: 560px;
+}
+.mdchart-chart-scroll {
+  overflow-x: auto;
+  margin: 1.25em 0;
+}
+.mdchart-placeholder {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--mdchart-grid);
+  border-radius: 4px;
+  color: var(--mdchart-text-muted);
+  font-size: 0.85rem;
+}
+.mdchart-placeholder-error {
+  border-color: var(--mdchart-danger);
+  color: var(--mdchart-danger);
+}
+
+/* --- detail panel: reads as the docked chat extending to the left, not as
+   something covering it. Its right edge sits flush against the chat column
+   (--mdchart-panel-dock-width, set by the host to that column's width; 0 if
+   there is no docked chat) with no gap and no radius on that side; the other
+   three edges take a normal margin off the page. The chat itself must stay
+   above the backdrop in stacking order (give it a z-index > 55) so the dim
+   layer darkens the dashboard behind both, not the chat it's attached to. --- */
+.mdchart-panel {
+  /* Defaults live in the var() fallback, not as a declaration here -- a
+     custom property declared on this class would out-specificity a host's
+     `md-detail-panel { --mdchart-panel-dock-width: ... }` override (class
+     beats type selector regardless of source order) and always win. */
+  position: fixed;
+  top: var(--mdchart-panel-margin, 56px);
+  bottom: var(--mdchart-panel-margin, 56px);
+  left: var(--mdchart-panel-margin, 56px);
+  right: var(--mdchart-panel-dock-width, 0px);
+  background: var(--mdchart-surface);
+  border-radius: 16px 0 0 16px;
+  box-shadow: 0 24px 64px rgba(20, 18, 14, 0.28);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 60;
+  opacity: 0;
+  transform: translateX(12px);
+  pointer-events: none;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+.mdchart-panel[open] { opacity: 1; transform: translateX(0); pointer-events: auto; }
+.mdchart-panel md-chart-view {
+  overflow-y: auto;
+  padding: 1.75rem 2rem;
+  flex: 1;
+}
+
+.mdchart-panel-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--mdchart-text-muted);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.mdchart-panel-close:hover { background: var(--mdchart-panel); color: var(--mdchart-text); }
+
+.mdchart-panel-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 18, 14, 0.28);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+  z-index: 55;
+}
+.mdchart-panel-backdrop[open] { opacity: 1; pointer-events: auto; }
+
+@media (max-width: 640px) {
+  .mdchart-panel {
+    --mdchart-panel-margin: 0px;
+    --mdchart-panel-dock-width: 0px;
+    border-radius: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mdchart-panel, .mdchart-panel-backdrop { transition: none; }
+}
+
+.mdchart-root :focus-visible {
+  outline: 2px solid var(--mdchart-brand-1, #7c3aed);
+  outline-offset: 2px;
+}

@@ -1,0 +1,9 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1440, "h": 900 },
+    { "file": "ChartGallery.dc.html", "x": 1560, "y": 0, "w": 1280, "h": 1180 },
+    { "file": "DetailPanel.dc.html", "x": 2920, "y": 0, "w": 1440, "h": 900 },
+    { "file": "StatCardSyntax.dc.html", "x": 0, "y": 1060, "w": 980, "h": 720 }
+  ],
+  "launch": { "view": "canvas" }
+}

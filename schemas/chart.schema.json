@@ -1,0 +1,289 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mdchart/schemas/chart.schema.json",
+  "title": "mdchart chart fragment",
+  "description": "The JSON body of a ```chart fenced code block. Almost always just a normal Chart.js config object: {type, data, options}. Colors and most of `options` should be omitted -- the renderer applies the CI brand palette automatically.",
+  "type": "object",
+  "required": ["type", "data"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Chart.js chart type, or one added by a chartjs/awesome extension.",
+      "enum": [
+        "bar", "line", "pie", "doughnut", "radar", "polarArea", "scatter", "bubble",
+        "sankey",
+        "treemap",
+        "matrix",
+        "wordCloud",
+        "funnel",
+        "venn", "euler",
+        "graph", "forceDirectedGraph", "dendrogram", "tree",
+        "choropleth", "bubbleMap",
+        "boxplot", "violin",
+        "candlestick", "ohlc",
+        "pcp",
+        "barWithErrorBars", "lineWithErrorBars", "scatterWithErrorBars"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "description": "Shape depends on `type`. Default shape below; see the conditional branches for sankey/venn/financial/matrix/wordCloud/pcp which use a different `datasets[].data` element shape.",
+      "properties": {
+        "labels": {
+          "type": "array",
+          "items": { "type": ["string", "number"] },
+          "description": "Category labels. Omit for scatter/bubble/sankey/venn/matrix-style charts that don't use labels."
+        },
+        "datasets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "label": { "type": "string" },
+              "data": { "type": "array" }
+            }
+          }
+        }
+      },
+      "required": ["datasets"]
+    },
+    "options": {
+      "type": "object",
+      "description": "Full Chart.js options passthrough. Omit `plugins.legend.labels.color`, scale colors, and dataset `backgroundColor`/`borderColor` -- those are filled in from the CI brand palette unless strictBrand is off. Set options.plugins.<name> (e.g. datalabels, annotation, trendline) to opt into that plugin; it is lazy-loaded only when present."
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "sankey" } } },
+      "then": {
+        "properties": {
+          "data": {
+            "properties": {
+              "datasets": {
+                "items": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "type": "object",
+                        "required": ["from", "to", "flow"],
+                        "properties": {
+                          "from": { "type": "string" },
+                          "to": { "type": "string" },
+                          "flow": { "type": "number" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "enum": ["venn", "euler"] } } },
+      "then": {
+        "properties": {
+          "data": {
+            "properties": {
+              "datasets": {
+                "items": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "type": "object",
+                        "required": ["sets", "size"],
+                        "properties": {
+                          "sets": { "type": "array", "items": { "type": "string" } },
+                          "size": { "type": "number" },
+                          "label": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "enum": ["candlestick", "ohlc"] } } },
+      "then": {
+        "properties": {
+          "data": {
+            "properties": {
+              "datasets": {
+                "items": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "type": "object",
+                        "required": ["x", "o", "h", "l", "c"],
+                        "properties": {
+                          "x": { "type": ["number", "string"] },
+                          "o": { "type": "number" },
+                          "h": { "type": "number" },
+                          "l": { "type": "number" },
+                          "c": { "type": "number" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "matrix" } } },
+      "then": {
+        "properties": {
+          "data": {
+            "properties": {
+              "datasets": {
+                "items": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "type": "object",
+                        "required": ["x", "y", "v"],
+                        "properties": {
+                          "x": { "type": ["string", "number"] },
+                          "y": { "type": ["string", "number"] },
+                          "v": { "type": "number" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "wordCloud" } } },
+      "then": {
+        "properties": {
+          "data": {
+            "properties": {
+              "labels": { "type": "array", "items": { "type": "string" } },
+              "datasets": {
+                "items": {
+                  "properties": {
+                    "data": { "type": "array", "items": { "type": "number" }, "description": "weight per label, same order as labels" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "pcp" } } },
+      "then": {
+        "properties": {
+          "data": {
+            "description": "One dataset PER AXIS, not one dataset of multi-key objects: `labels` names the rows, each dataset is one axis with `data` holding that axis's value for every row in the same order.",
+            "properties": {
+              "labels": { "type": "array", "description": "Row names, e.g. SKU names." },
+              "datasets": {
+                "items": {
+                  "required": ["label", "data"],
+                  "properties": {
+                    "label": { "type": "string", "description": "The axis name, e.g. 'price'." },
+                    "data": { "type": "array", "items": { "type": "number" }, "description": "This axis's value for each row, same order as `labels`." }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "enum": ["barWithErrorBars", "lineWithErrorBars", "scatterWithErrorBars"] } } },
+      "then": {
+        "properties": {
+          "data": {
+            "properties": {
+              "datasets": {
+                "items": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "type": "object",
+                        "required": ["y", "yMin", "yMax"],
+                        "properties": {
+                          "y": { "type": "number" },
+                          "yMin": { "type": "number" },
+                          "yMax": { "type": "number" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "choropleth" } } },
+      "then": {
+        "properties": {
+          "data": {
+            "properties": {
+              "datasets": {
+                "items": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "type": "object",
+                        "required": ["feature", "value"],
+                        "properties": {
+                          "feature": { "type": "string", "description": "A country name, e.g. 'Germany'. Resolved automatically against a bundled world map -- never a raw GeoJSON object." },
+                          "value": { "type": "number" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "enum": ["graph", "forceDirectedGraph", "dendrogram", "tree"] } } },
+      "then": {
+        "properties": {
+          "data": {
+            "description": "`labels` names each node. For `forceDirectedGraph` (recommended default for a network diagram), omit x/y -- layout is computed automatically. Plain `graph` needs explicit x/y per node since it does not auto-layout. `tree`/`dendrogram` nodes take a `parent` index instead of `edges`.",
+            "properties": {
+              "labels": { "type": "array", "items": { "type": "string" } },
+              "datasets": {
+                "items": {
+                  "properties": {
+                    "data": { "type": "array", "items": { "type": "object", "properties": { "x": { "type": "number" }, "y": { "type": "number" }, "parent": { "type": "number" } } } },
+                    "edges": { "type": "array", "items": { "type": "object", "required": ["source", "target"], "properties": { "source": { "type": "number" }, "target": { "type": "number" } } } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
