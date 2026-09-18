@@ -14,6 +14,8 @@
       --muted: #6b6862;
       --hairline: #dedbd3;
       --brand: #7c3aed; /* stand-in CI, see kb-admin */
+      --brand-2: #0ea5e9;
+      --brand-3: #14b8a6;
     }
     * { box-sizing: border-box; }
     html, body { margin: 0; height: 100%; }
@@ -86,15 +88,39 @@
       font-weight: 500; display: flex; align-items: center; gap: 0.5rem;
     }
     #chat-dock .chat-head .dot { width: 7px; height: 7px; border-radius: 50%; background: #2f6846; }
-    #chat-body { padding: 0.9rem; overflow-y: auto; flex: 1; }
-    .msg { margin-bottom: 0.7rem; line-height: 1.45; }
-    .msg.assistant {
-      background: var(--paper); border-radius: 6px; padding: 0.55rem 0.75rem;
-      cursor: pointer; border: 1px solid transparent;
-    }
-    .msg.assistant:hover { border-color: var(--brand); }
-    .msg.assistant .hint { display: block; font-size: 0.74rem; color: var(--muted); margin-top: 0.3rem; }
+    #chat-body { padding: 0.9rem; display: flex; flex-direction: column; gap: 0.9rem; overflow-y: auto; flex: 1; }
+    .msg { line-height: 1.45; }
     .msg.user { text-align: right; color: var(--muted); }
+    .msg-pair { display: flex; flex-direction: column; gap: 0.5rem; }
+    .assistant-text { font-size: 0.88rem; }
+
+    /* --- brief card: the design's chat-card pattern -- plain reply text,
+       then a bordered card summarizing the report with a couple of its own
+       key numbers, opening the full report on click. --- */
+    .brief-card {
+      border: 1px solid var(--hairline); border-radius: 10px; overflow: hidden;
+      cursor: pointer; background: var(--paper);
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+    .brief-card:hover, .brief-card:focus-visible {
+      border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 14%, transparent);
+      outline: none;
+    }
+    .brief-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.7rem 0.85rem; border-bottom: 1px solid var(--hairline);
+    }
+    .brief-head .title { font-weight: 600; font-size: 0.84rem; }
+    .brief-head .expand {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      color: var(--brand); font-size: 0.76rem; font-weight: 600; white-space: nowrap;
+    }
+    .brief-head .expand svg { width: 11px; height: 11px; }
+    .brief-body { padding: 0.7rem 0.85rem 0.8rem; display: flex; flex-direction: column; gap: 0.4rem; }
+    .brief-item { display: flex; align-items: center; gap: 0.55rem; font-size: 0.8rem; }
+    .brief-item .swatch { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+    .brief-item .t { color: var(--muted); flex: 1; }
+    .brief-item .v { font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
     #chat-input-row { display: flex; border-top: 1px solid var(--hairline); }
     #chat-input-row input {
       flex: 1; border: none; padding: 0.65rem 0.8rem; font: inherit; background: transparent; color: var(--ink);
@@ -153,19 +179,19 @@
     <div class="chat-head"><span class="dot"></span> Assistant</div>
     <div id="chat-body">
       <div class="msg user">How's the business doing this month?</div>
-      <div class="msg assistant" data-src="/demo/messages/revenue.md" tabindex="0" role="button"></div>
+      <div class="msg-pair" data-src="/demo/messages/revenue.md"><div class="assistant-text"></div></div>
 
       <div class="msg user">What's going on with orders right now?</div>
-      <div class="msg assistant" data-src="/demo/messages/orders.md" tabindex="0" role="button"></div>
+      <div class="msg-pair" data-src="/demo/messages/orders.md"><div class="assistant-text"></div></div>
 
       <div class="msg user">How are the individual shops performing?</div>
-      <div class="msg assistant" data-src="/demo/messages/shops.md" tabindex="0" role="button"></div>
+      <div class="msg-pair" data-src="/demo/messages/shops.md"><div class="assistant-text"></div></div>
 
       <div class="msg user">Anything interesting about our users?</div>
-      <div class="msg assistant" data-src="/demo/messages/users.md" tabindex="0" role="button"></div>
+      <div class="msg-pair" data-src="/demo/messages/users.md"><div class="assistant-text"></div></div>
 
       <div class="msg user">How's delivery and our supplier markets looking?</div>
-      <div class="msg assistant" data-src="/demo/messages/logistics.md" tabindex="0" role="button"></div>
+      <div class="msg-pair" data-src="/demo/messages/logistics.md"><div class="assistant-text"></div></div>
     </div>
     <div id="chat-input-row">
       <input type="text" placeholder="Ask about orders, shops, users…" />
@@ -180,28 +206,79 @@
 
     const panel = document.querySelector('md-detail-panel')
 
-    // Each assistant message IS the full payload: a short teaser followed by
-    // an <extended-info-md> block carrying the report + charts. Nothing is
-    // fetched separately when the message is clicked -- see PROMPT.md.
-    document.querySelectorAll('.msg.assistant[data-src]').forEach(async (el) => {
-      const raw = await fetch(el.dataset.src).then((r) => r.text())
+    // A card's title comes from the report's first heading; its preview
+    // rows come from the first ```statcard fence, if the report has one --
+    // the same data the panel will render in full, just the first couple of
+    // numbers surfaced before the operator clicks in.
+    function extractCardMeta(detail) {
+      const title = detail.match(/^#\s+(.+)$/m)?.[1]?.trim() ?? 'Full report'
+      const statcardMatch = detail.match(/```statcard\n([\s\S]*?)\n```/)
+      let rows = []
+      if (statcardMatch) {
+        try {
+          rows = JSON.parse(statcardMatch[1])
+            .slice(0, 3)
+            .map((c) => ({ label: String(c.label), value: String(c.value) }))
+        } catch {
+          rows = []
+        }
+      }
+      return { title, rows }
+    }
+
+    function buildBriefCard(title, rows) {
+      const card = document.createElement('div')
+      card.className = 'brief-card'
+      card.tabIndex = 0
+      card.setAttribute('role', 'button')
+
+      const head = document.createElement('div')
+      head.className = 'brief-head'
+      const titleEl = document.createElement('span')
+      titleEl.className = 'title'
+      titleEl.textContent = title
+      const expand = document.createElement('span')
+      expand.className = 'expand'
+      expand.innerHTML = 'Full report<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg>'
+      head.append(titleEl, expand)
+      card.appendChild(head)
+
+      if (rows.length) {
+        const body = document.createElement('div')
+        body.className = 'brief-body'
+        rows.forEach((row, i) => {
+          const item = document.createElement('div')
+          item.className = 'brief-item'
+          item.innerHTML = `<span class="swatch" style="background:var(--brand${i === 0 ? '' : '-' + (i + 1)})"></span><span class="t"></span><span class="v"></span>`
+          item.querySelector('.t').textContent = row.label
+          item.querySelector('.v').textContent = row.value
+          body.appendChild(item)
+        })
+        card.appendChild(body)
+      }
+      return card
+    }
+
+    // Each message IS the full payload: a short teaser followed by an
+    // <extended-info-md> block carrying the report + charts. Nothing is
+    // fetched separately when the card is clicked -- see PROMPT.md.
+    document.querySelectorAll('.msg-pair[data-src]').forEach(async (wrap) => {
+      const raw = await fetch(wrap.dataset.src).then((r) => r.text())
       const { visible, detail } = extractExtendedInfo(raw)
 
-      el.innerHTML = await renderMarkdown(visible)
-      if (detail) {
-        const hint = document.createElement('span')
-        hint.className = 'hint'
-        hint.textContent = 'Click for the full report →'
-        el.appendChild(hint)
-      }
+      wrap.querySelector('.assistant-text').innerHTML = await renderMarkdown(visible)
+      if (!detail) return
+
+      const { title, rows } = extractCardMeta(detail)
+      const card = buildBriefCard(title, rows)
+      wrap.appendChild(card)
 
       function open() {
-        if (!detail) return
         panel.source = detail
-        panel.open(el)
+        panel.open(card)
       }
-      el.addEventListener('click', open)
-      el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') open() })
+      card.addEventListener('click', open)
+      card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') open() })
     })
   </script>
 </body>

@@ -81,6 +81,16 @@ function applyThemeDefaults(config: any, palette: BrandPalette, container: HTMLE
   config.options = config.options ?? {}
   const opts = config.options
   opts.responsive = opts.responsive ?? true
+  // Chart.js's animated first frame renders via a separate async Animator
+  // loop, not synchronously during update() -- and chartjs-plugin-annotation
+  // has a real, reproducible bug there: its own per-chart state isn't ready
+  // yet when that first frame's draw() fires, throwing
+  // "Cannot read properties of undefined (reading 'visibleElements')" (see
+  // chartjs/chartjs-plugin-annotation#909, a similar resize-triggered
+  // variant of the same root cause). Disabling animation makes draw() run
+  // synchronously inside update() instead, sidestepping the whole timing
+  // window. A reporting dashboard doesn't need charts to animate in anyway.
+  opts.animation = opts.animation ?? false
   opts.maintainAspectRatio = false
   opts.color = opts.color ?? palette.text
 
@@ -238,7 +248,19 @@ async function mountOne(container: HTMLElement) {
 
     let resizeObserver: ResizeObserver | undefined
     if (typeof ResizeObserver !== 'undefined') {
-      resizeObserver = new ResizeObserver(() => instance.resize())
+      // ResizeObserver fires once immediately on observe(), reporting the
+      // current size even though nothing has changed yet -- Chart.js has
+      // already sized itself correctly at construction, and calling
+      // resize() again this early races some plugins' own init lifecycle
+      // (chartjs-plugin-annotation throws reading a still-unset internal
+      // state if a resize lands before its own beforeInit/afterUpdate
+      // hooks finish -- see chartjs/chartjs-plugin-annotation#909). Skip
+      // that first, redundant callback.
+      let firstCallback = true
+      resizeObserver = new ResizeObserver(() => {
+        if (firstCallback) { firstCallback = false; return }
+        instance.resize()
+      })
       resizeObserver.observe(container)
     }
 
