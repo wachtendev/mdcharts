@@ -14,7 +14,8 @@ export default defineConfig({
     },
     rollupOptions: {
       external: [
-        'chart.js',
+        'echarts',
+        'echarts-wordcloud',
         'shiki',
         '@shikijs/markdown-it',
         'mermaid',
@@ -22,12 +23,8 @@ export default defineConfig({
         'markdown-it-task-lists',
         'markdown-it-deflist',
         'markdown-it-mathjax3',
-        /^chartjs-chart-/,
-        /^chartjs-plugin-/,
-        /^chartjs-adapter-/,
-        'date-fns',
+        'topojson-client',
         'world-atlas/countries-110m.json',
-        '@sgratzl/chartjs-chart-boxplot',
       ],
     },
   },

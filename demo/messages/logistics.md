@@ -14,16 +14,18 @@ Delivery times are holding steady across carriers, and EU sales are still concen
 
 ```chart
 {
-  "type": "choropleth",
-  "data": {
-    "labels": ["Germany", "France", "Netherlands", "Spain"],
-    "datasets": [{ "outline": [], "data": [
-      { "feature": "Germany", "value": 41000 },
-      { "feature": "France", "value": 22000 },
-      { "feature": "Netherlands", "value": 12000 },
-      { "feature": "Spain", "value": 9000 }
-    ] }]
-  }
+  "tooltip": {},
+  "series": [{
+    "type": "map",
+    "map": "world",
+    "roam": true,
+    "data": [
+      { "name": "Germany", "value": 41000 },
+      { "name": "France", "value": 22000 },
+      { "name": "Netherlands", "value": 12000 },
+      { "name": "Spain", "value": 9000 }
+    ]
+  }]
 }
 ```
 
@@ -31,32 +33,44 @@ Delivery times are holding steady across carriers, and EU sales are still concen
 
 ```chart
 {
-  "type": "bubbleMap",
-  "data": {
-    "labels": ["Rotterdam", "Hamburg", "Lyon", "Milan"],
-    "datasets": [{ "data": [
-      { "longitude": 4.48, "latitude": 51.92, "value": 820 },
-      { "longitude": 9.99, "latitude": 53.55, "value": 540 },
-      { "longitude": 4.83, "latitude": 45.76, "value": 310 },
-      { "longitude": 9.19, "latitude": 45.46, "value": 260 }
-    ] }]
-  }
+  "geo": { "map": "world", "roam": true },
+  "tooltip": {},
+  "visualMap": {
+    "dimension": 2, "min": 260, "max": 820, "show": false,
+    "inRange": { "symbolSize": [12, 36] }
+  },
+  "series": [{
+    "type": "scatter",
+    "coordinateSystem": "geo",
+    "data": [
+      { "name": "Rotterdam", "value": [4.48, 51.92, 820] },
+      { "name": "Hamburg", "value": [9.99, 53.55, 540] },
+      { "name": "Lyon", "value": [4.83, 45.76, 310] },
+      { "name": "Milan", "value": [9.19, 45.46, 260] }
+    ]
+  }]
 }
 ```
 
-## Delivery time ± variance per carrier
+## Avg. delivery time per carrier
 
 ```chart
 {
-  "type": "barWithErrorBars",
-  "data": {
-    "labels": ["CarrierA", "CarrierB", "CarrierC"],
-    "datasets": [{ "label": "Days", "data": [
-      { "y": 2.4, "yMin": 1.8, "yMax": 3.1 },
-      { "y": 3.1, "yMin": 2.2, "yMax": 4.4 },
-      { "y": 1.9, "yMin": 1.5, "yMax": 2.6 }
-    ] }]
-  }
+  "xAxis": { "type": "category", "data": ["CarrierA", "CarrierB", "CarrierC"] },
+  "yAxis": { "type": "value", "name": "days" },
+  "series": [{
+    "type": "bar",
+    "data": [2.4, 3.1, 1.9],
+    "markLine": {
+      "symbol": "none",
+      "label": { "show": false },
+      "data": [
+        [{ "xAxis": 0, "yAxis": 1.8 }, { "xAxis": 0, "yAxis": 3.1 }],
+        [{ "xAxis": 1, "yAxis": 2.2 }, { "xAxis": 1, "yAxis": 4.4 }],
+        [{ "xAxis": 2, "yAxis": 1.5 }, { "xAxis": 2, "yAxis": 2.6 }]
+      ]
+    }
+  }]
 }
 ```
 
@@ -64,14 +78,16 @@ Delivery times are holding steady across carriers, and EU sales are still concen
 
 ```chart
 {
-  "type": "candlestick",
-  "data": {
-    "datasets": [{ "data": [
-      { "x": "2025-07-01", "o": 12.4, "h": 13.1, "l": 12.0, "c": 12.9 },
-      { "x": "2025-07-02", "o": 12.9, "h": 13.4, "l": 12.6, "c": 13.2 },
-      { "x": "2025-07-03", "o": 13.2, "h": 13.3, "l": 12.5, "c": 12.7 }
-    ] }]
-  }
+  "xAxis": { "type": "category", "data": ["Jul 1", "Jul 2", "Jul 3"] },
+  "yAxis": { "type": "value", "scale": true },
+  "series": [{
+    "type": "candlestick",
+    "data": [
+      [12.4, 12.9, 12.0, 13.1],
+      [12.9, 13.2, 12.6, 13.4],
+      [13.2, 12.7, 12.5, 13.3]
+    ]
+  }]
 }
 ```
 </extended-info-md>

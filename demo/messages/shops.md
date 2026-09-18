@@ -4,14 +4,23 @@ Northwind leads on revenue and NPS; Acme has the best fulfillment speed but a hi
 
 ```chart
 {
-  "type": "radar",
-  "data": {
-    "labels": ["Revenue", "Return rate", "NPS", "Fulfillment speed", "Repeat rate"],
-    "datasets": [
-      { "label": "Northwind", "data": [90, 60, 82, 75, 70] },
-      { "label": "Acme", "data": [65, 80, 60, 88, 55] }
+  "legend": {},
+  "radar": {
+    "indicator": [
+      { "name": "Revenue", "max": 100 },
+      { "name": "Return rate", "max": 100 },
+      { "name": "NPS", "max": 100 },
+      { "name": "Fulfillment speed", "max": 100 },
+      { "name": "Repeat rate", "max": 100 }
     ]
-  }
+  },
+  "series": [{
+    "type": "radar",
+    "data": [
+      { "name": "Northwind", "value": [90, 60, 82, 75, 70] },
+      { "name": "Acme", "value": [65, 80, 60, 88, 55] }
+    ]
+  }]
 }
 ```
 
@@ -19,20 +28,17 @@ Northwind leads on revenue and NPS; Acme has the best fulfillment speed but a hi
 
 ```chart
 {
-  "type": "treemap",
-  "data": {
-    "datasets": [{
-      "tree": [
-        { "category": "Apparel", "sku": "Jacket", "value": 12400 },
-        { "category": "Apparel", "sku": "Boots", "value": 8100 },
-        { "category": "Home", "sku": "Lamp", "value": 6200 },
-        { "category": "Electronics", "sku": "Headphones", "value": 15800 }
-      ],
-      "key": "value",
-      "groups": ["category", "sku"],
-      "data": []
-    }]
-  }
+  "series": [{
+    "type": "treemap",
+    "data": [
+      { "name": "Apparel", "children": [
+        { "name": "Jacket", "value": 12400 },
+        { "name": "Boots", "value": 8100 }
+      ] },
+      { "name": "Home", "children": [{ "name": "Lamp", "value": 6200 }] },
+      { "name": "Electronics", "children": [{ "name": "Headphones", "value": 15800 }] }
+    ]
+  }]
 }
 ```
 
@@ -40,19 +46,21 @@ Northwind leads on revenue and NPS; Acme has the best fulfillment speed but a hi
 
 ```chart
 {
-  "type": "sankey",
-  "data": {
-    "datasets": [{
-      "data": [
-        { "from": "Organic", "to": "Northwind", "flow": 4200 },
-        { "from": "Paid ads", "to": "Northwind", "flow": 2100 },
-        { "from": "Organic", "to": "Acme", "flow": 3100 },
-        { "from": "Northwind", "to": "Apparel", "flow": 3800 },
-        { "from": "Northwind", "to": "Home", "flow": 2500 },
-        { "from": "Acme", "to": "Electronics", "flow": 3100 }
-      ]
-    }]
-  }
+  "series": [{
+    "type": "sankey",
+    "data": [
+      { "name": "Organic" }, { "name": "Paid ads" }, { "name": "Northwind" }, { "name": "Acme" },
+      { "name": "Apparel" }, { "name": "Home" }, { "name": "Electronics" }
+    ],
+    "links": [
+      { "source": "Organic", "target": "Northwind", "value": 4200 },
+      { "source": "Paid ads", "target": "Northwind", "value": 2100 },
+      { "source": "Organic", "target": "Acme", "value": 3100 },
+      { "source": "Northwind", "target": "Apparel", "value": 3800 },
+      { "source": "Northwind", "target": "Home", "value": 2500 },
+      { "source": "Acme", "target": "Electronics", "value": 3100 }
+    ]
+  }]
 }
 ```
 </extended-info-md>

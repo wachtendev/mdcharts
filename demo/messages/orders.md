@@ -10,22 +10,36 @@
 ]
 ```
 
+## Checkout funnel
+
 ```chart
-{ "type": "funnel", "data": { "labels": ["Viewed", "Added to cart", "Checkout started", "Paid"], "datasets": [{ "data": [18400, 6200, 3100, 2480] }] } }
+{
+  "series": [{
+    "type": "funnel",
+    "left": "10%",
+    "width": "80%",
+    "data": [
+      { "name": "Viewed", "value": 18400 },
+      { "name": "Added to cart", "value": 6200 },
+      { "name": "Checkout started", "value": 3100 },
+      { "name": "Paid", "value": 2480 }
+    ]
+  }]
+}
 ```
 
 ## Orders vs. returns per week
 
 ```chart
 {
-  "type": "bar",
-  "data": {
-    "labels": ["W1", "W2", "W3", "W4"],
-    "datasets": [
-      { "label": "Orders", "data": [312, 340, 298, 355] },
-      { "label": "Returns", "data": [18, 22, 15, 24] }
-    ]
-  }
+  "xAxis": { "type": "category", "data": ["W1", "W2", "W3", "W4"] },
+  "yAxis": { "type": "value" },
+  "legend": {},
+  "tooltip": { "trigger": "axis" },
+  "series": [
+    { "name": "Orders", "type": "bar", "data": [312, 340, 298, 355] },
+    { "name": "Returns", "type": "bar", "data": [18, 22, 15, 24] }
+  ]
 }
 ```
 

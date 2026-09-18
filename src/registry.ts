@@ -1,256 +1,36 @@
-import type { Chart as ChartJS } from 'chart.js'
+// ECharts ships every chart type (line, bar, pie, scatter, radar, boxplot,
+// candlestick, heatmap, treemap, sunburst, graph, sankey, funnel, gauge,
+// parallel, tree, themeRiver, pictorialBar, map, ...) in one package with no
+// per-type registration step -- unlike Chart.js's core+extension-per-package
+// model, there's no registry to build here. The only two things that still
+// need lazy setup are the word-cloud series type (a separate optional
+// package that self-registers into this same echarts instance) and the
+// world map GeoJSON a `map`/`geo` series needs (see geo.ts).
 
-type Registrar = () => Promise<void>
+let echartsPromise: Promise<any> | null = null
 
-// ponytail: one entry per package, not per type -- multiple `type` values can
-// share a loader (e.g. graph/tree/dendrogram all come from chartjs-chart-graph).
-const TYPE_LOADERS: Record<string, Registrar> = {
-  sankey: async () => {
-    const { SankeyController, Flow } = await import('chartjs-chart-sankey')
-    getChart().register(SankeyController, Flow)
-  },
-  treemap: async () => {
-    const { TreemapController, TreemapElement } = await import('chartjs-chart-treemap')
-    getChart().register(TreemapController, TreemapElement)
-  },
-  matrix: async () => {
-    const { MatrixController, MatrixElement } = await import('chartjs-chart-matrix')
-    getChart().register(MatrixController, MatrixElement)
-  },
-  wordCloud: async () => {
-    const { WordCloudController, WordElement } = await import('chartjs-chart-wordcloud')
-    getChart().register(WordCloudController, WordElement)
-  },
-  funnel: async () => {
-    const { FunnelController, TrapezoidElement } = await import('chartjs-chart-funnel')
-    getChart().register(FunnelController, TrapezoidElement)
-  },
-  venn: async () => {
-    const mod = await import('chartjs-chart-venn')
-    getChart().register(mod.VennDiagramController, mod.ArcSlice)
-  },
-  euler: async () => {
-    const mod = await import('chartjs-chart-venn')
-    getChart().register(mod.EulerDiagramController, mod.ArcSlice)
-  },
-  // Each graph variant is its own controller in this package (not one shared
-  // "graph" controller with a mode flag) -- they all share the EdgeLine element.
-  graph: async () => {
-    const mod = await import('chartjs-chart-graph')
-    getChart().register(mod.GraphController, mod.EdgeLine)
-  },
-  forceDirectedGraph: async () => {
-    const mod = await import('chartjs-chart-graph')
-    getChart().register(mod.ForceDirectedGraphController, mod.EdgeLine)
-  },
-  dendrogram: async () => {
-    const mod = await import('chartjs-chart-graph')
-    getChart().register(mod.DendrogramController, mod.EdgeLine)
-  },
-  tree: async () => {
-    const mod = await import('chartjs-chart-graph')
-    getChart().register(mod.TreeController, mod.EdgeLine)
-  },
-  choropleth: async () => {
-    const mod = await import('chartjs-chart-geo')
-    getChart().register(mod.ChoroplethController, mod.GeoFeature, mod.ColorScale, mod.ProjectionScale)
-  },
-  bubbleMap: async () => {
-    const mod = await import('chartjs-chart-geo')
-    getChart().register(mod.BubbleMapController, mod.GeoFeature, mod.SizeScale, mod.ProjectionScale)
-  },
-  boxplot: async () => {
-    const mod = await import('@sgratzl/chartjs-chart-boxplot')
-    getChart().register(mod.BoxPlotController, mod.BoxAndWiskers)
-  },
-  violin: async () => {
-    const mod = await import('@sgratzl/chartjs-chart-boxplot')
-    getChart().register(mod.ViolinController, mod.Violin)
-  },
-  candlestick: async () => {
-    // financial charts default to a 'time' x-scale, which throws without a
-    // date adapter registered -- side-effect import only, nothing to pass to register().
-    await import('chartjs-adapter-date-fns')
-    const mod = await import('chartjs-chart-financial')
-    getChart().register(mod.CandlestickController, mod.CandlestickElement)
-  },
-  ohlc: async () => {
-    await import('chartjs-adapter-date-fns')
-    const mod = await import('chartjs-chart-financial')
-    getChart().register(mod.OhlcController, mod.OhlcElement)
-  },
-  pcp: async () => {
-    const mod = await import('chartjs-chart-pcp')
-    // Generic register() only files LinearAxis under scales (it extends
-    // LinearScale) even though the controller also needs it as an element
-    // for datasetElementType -- match the package's own test setup, which
-    // registers these granularly rather than through the auto-detecting
-    // register() helper.
-    const Chart = getChart()
-    Chart.registry.addControllers(mod.ParallelCoordinatesController)
-    Chart.registry.addElements(mod.LineSegment, mod.LinearAxis)
-    Chart.registry.addScales(mod.PCPScale)
-  },
-  barWithErrorBars: async () => {
-    const mod = await import('chartjs-chart-error-bars')
-    getChart().register(mod.BarWithErrorBarsController, mod.BarWithErrorBar)
-  },
-  lineWithErrorBars: async () => {
-    const mod = await import('chartjs-chart-error-bars')
-    getChart().register(mod.LineWithErrorBarsController, mod.PointWithErrorBar)
-  },
-  scatterWithErrorBars: async () => {
-    const mod = await import('chartjs-chart-error-bars')
-    getChart().register(mod.ScatterWithErrorBarsController, mod.PointWithErrorBar)
-  },
+/** Resolves the consumer's own `echarts` peer install. Never bundles echarts itself. */
+export function loadEcharts(): Promise<any> {
+  if (!echartsPromise) echartsPromise = import('echarts')
+  return echartsPromise
 }
 
-// Real Chart.js plugin OBJECTS (they export lifecycle hooks -- beforeUpdate,
-// afterDraw, event handlers) get resolved here and passed into a chart's own
-// `config.plugins` array (see resolveLocalPlugins/chart.ts), never through
-// `Chart.register()`. A globally-registered plugin's hooks fire on *every*
-// chart on the page, not just the ones that opted in via
-// `options.plugins.<key>` -- chartjs-plugin-annotation in particular throws
-// when its hooks run against a chart whose own per-chart state was never
-// initialized (see chartjs/chartjs-plugin-annotation#909 and its resize/
-// mouse-event variants), so a chart using it would corrupt every *other*
-// chart on the page too. Local registration makes that structurally
-// impossible instead of trying to opt back out per chart.
-const LOCAL_PLUGIN_LOADERS: Record<string, () => Promise<any>> = {
-  datalabels: async () => (await import('chartjs-plugin-datalabels')).default,
-  annotation: async () => (await import('chartjs-plugin-annotation')).default,
-  zoom: async () => (await import('chartjs-plugin-zoom')).default,
-  gradient: async () => (await import('chartjs-plugin-gradient')).default,
-  dragData: async () => (await import('chartjs-plugin-dragdata')).default,
+const extensionLoaded = new Set<string>()
+
+/** Series types that need an optional peer package loaded before use, keyed by `series[].type`. */
+const SERIES_EXTENSIONS: Record<string, () => Promise<any>> = {
+  wordCloud: () => import('echarts-wordcloud'),
 }
 
-// These two are opt-in by their own design already -- trendline only
-// activates per-dataset (`dataset.trendlineLinear`), hierarchical is a scale
-// *type* a chart must explicitly request (`scales.x.type: 'hierarchical'`) --
-// so the usual global-registration side effects are safe for them.
-const SIDE_EFFECT_PLUGIN_LOADERS: Record<string, Registrar> = {
-  trendlineLinear: async () => { await import('chartjs-plugin-trendline') },
-  hierarchical: async () => { await import('chartjs-plugin-hierarchical') },
-}
-
-let chartModPromise: Promise<typeof ChartJS> | null = null
-let chartMod: any = null
-
-// The consumer's own `chart.js` peer install is what gets loaded here --
-// this module never bundles Chart.js itself.
-async function loadChart() {
-  if (!chartModPromise) {
-    chartModPromise = import('chart.js').then((m) => {
-      chartMod = m
-      m.Chart.register(...m.registerables)
-      return m.Chart
-    })
-  }
-  return chartModPromise
-}
-
-function getChart(): { register: (...args: any[]) => void; registry: any } {
-  if (!chartMod) throw new Error('mdchart: call ensureChartType()/registerAll() (which awaits Chart.js) before using getChart()')
-  return chartMod.Chart
-}
-
-const registered = new Set<string>()
-
-export class UnknownChartTypeError extends Error {
-  constructor(type: string) {
-    super(`mdchart: unknown chart type "${type}" -- not a core Chart.js type or a registered chartjs/awesome extension. See schemas/chart.schema.json for the supported list.`)
-    this.name = 'UnknownChartTypeError'
-  }
-}
-
-/** Resolves the chart.js peer and registers whatever `type` + plugin keys this config needs. Idempotent. */
-export async function ensureChartType(type: string, pluginKeys: string[] = []): Promise<typeof ChartJS> {
-  const Chart = await loadChart()
-
-  const isCore = ['bar', 'line', 'pie', 'doughnut', 'radar', 'polarArea', 'scatter', 'bubble'].includes(type)
-  if (!isCore) {
-    const loader = TYPE_LOADERS[type]
-    if (!loader) throw new UnknownChartTypeError(type)
-    if (!registered.has(type)) {
-      await loader()
-      registered.add(type)
-    }
-  }
-
-  for (const key of pluginKeys) {
-    const loader = SIDE_EFFECT_PLUGIN_LOADERS[key]
-    if (loader && !registered.has(`plugin:${key}`)) {
-      await loader()
-      registered.add(`plugin:${key}`)
-    }
-  }
-
-  return Chart
-}
-
-const localPluginCache = new Map<string, Promise<any>>()
-
-/**
- * Resolves the given plugin keys to actual plugin objects for a chart's own
- * `config.plugins` array -- never through `Chart.register()`. See
- * LOCAL_PLUGIN_LOADERS above for why: local registration only affects the
- * one chart that asked for it, structurally, rather than needing every other
- * chart to opt back out.
- */
-export async function resolveLocalPlugins(pluginKeys: string[]): Promise<any[]> {
-  const resolved = await Promise.all(
-    pluginKeys
-      .filter((key) => key in LOCAL_PLUGIN_LOADERS)
-      .map(async (key) => {
-        if (!localPluginCache.has(key)) localPluginCache.set(key, LOCAL_PLUGIN_LOADERS[key]())
-        const plugin = await localPluginCache.get(key)!
-        // Chart.register(plugin) does two independent things: it wires the
-        // plugin's lifecycle hooks to run on every chart (the part we're
-        // avoiding -- see LOCAL_PLUGIN_LOADERS above), and, as a side
-        // effect, it merges plugin.defaults into Chart.defaults.plugins.<id>
-        // (chart.js's TypedRegistry.register -> registerDefaults). Skipping
-        // registration skips that merge too. It's usually harmless (options
-        // just resolve to hardcoded fallbacks instead), but
-        // chartjs-plugin-annotation's own annotation *elements* (line, box,
-        // label, ...) declare their fallback route as
-        // `plugins.annotation.common` (see its `defaults.describe(...)`
-        // call, itself module-top-level and so unaffected by any of this),
-        // and an unmerged, undefined `common` crashes on first draw
-        // ("Cannot read properties of undefined (reading 'borderCapStyle')").
-        // Replicate just the defaults merge here -- pure data, no hooks, so
-        // it's safe to do globally regardless of which charts use the
-        // plugin -- without going through the unsafe Chart.register(plugin)
-        // path that would also wire up its hooks.
-        if (!registered.has(`plugin-defaults:${key}`)) {
-          // resolveLocalPlugins can run concurrently with ensureChartType
-          // (chart.ts awaits both via Promise.all) -- await loadChart()
-          // directly rather than getChart(), which throws until Chart.js
-          // has actually resolved.
-          const Chart = (await loadChart()) as any
-          if (plugin.defaults) Chart.defaults.set(`plugins.${plugin.id ?? key}`, plugin.defaults)
-          if (plugin.descriptors) Chart.defaults.describe(`plugins.${plugin.id ?? key}`, plugin.descriptors)
-          // chartjs-plugin-annotation also declares its own annotation
-          // *element types* (line, box, label, ...) and only registers
-          // them -- via Chart.register(annotationTypes) -- from its own
-          // afterRegister() hook, which normally only runs when the plugin
-          // itself is registered. Registering element *types* is exposing
-          // data classes, not wiring up hooks, so it's safe to call
-          // directly here too.
-          plugin.afterRegister?.()
-          registered.add(`plugin-defaults:${key}`)
-        }
-        return plugin
+/** Loads whichever optional series-type extensions `seriesTypes` actually needs. Idempotent. */
+export async function ensureSeriesExtensions(seriesTypes: string[]): Promise<void> {
+  await loadEcharts()
+  await Promise.all(
+    seriesTypes
+      .filter((t) => t in SERIES_EXTENSIONS && !extensionLoaded.has(t))
+      .map(async (t) => {
+        await SERIES_EXTENSIONS[t]()
+        extensionLoaded.add(t)
       }),
   )
-  return resolved.filter(Boolean)
-}
-
-/** Escape hatch: eager-load every known extension type and plugin. */
-export async function registerAll(): Promise<void> {
-  await loadChart()
-  await Promise.all([
-    ...Object.keys(TYPE_LOADERS).map((t) => ensureChartType(t)),
-    ...Object.keys(SIDE_EFFECT_PLUGIN_LOADERS).map((k) => ensureChartType('bar', [k])),
-    resolveLocalPlugins(Object.keys(LOCAL_PLUGIN_LOADERS)),
-  ])
 }

@@ -1,16 +1,10 @@
-// Choropleth/bubbleMap need real country geometry to draw anything --
-// chartjs-chart-geo intentionally ships no map data of its own (see its
-// README). Without this, a `feature` value has to be a full GeoJSON Feature
-// object, which no AI is going to hand-write. This resolves a plain country
-// *name* string against a bundled world atlas instead, so the fence stays as
-// cheap to emit as every other chart type: `{ "feature": "Germany", ... }`.
+// A `map` series (choropleth) or `geo` component needs a registered GeoJSON
+// map under the name it references -- ECharts ships no map data of its own.
+// Resolves a bundled world atlas once and registers it as `"world"`, so the
+// fence stays as cheap to emit as any other chart type: a plain country name
+// string in `series[].data[].name`, e.g. `{"name": "Germany", "value": 42}`.
 
-interface WorldAtlas {
-  countries: any[]
-  outline: any
-}
-
-let worldPromise: Promise<WorldAtlas> | null = null
+let registered: Promise<void> | null = null
 
 async function importWorldTopology(): Promise<{ default: any }> {
   // Bundlers (Vite/webpack/Rollup) resolve a bare JSON import with no
@@ -24,68 +18,15 @@ async function importWorldTopology(): Promise<{ default: any }> {
   }
 }
 
-function loadWorldAtlas(): Promise<WorldAtlas> {
-  if (!worldPromise) {
-    worldPromise = Promise.all([
-      importWorldTopology(),
-      import('chartjs-chart-geo') as Promise<any>,
-    ]).then(([{ default: topology }, geoMod]) => {
-      const countries = geoMod.topojson.feature(topology, topology.objects.countries).features
-      const landFeatures = geoMod.topojson.feature(topology, topology.objects.land).features
-      const outline = landFeatures[0] ?? { type: 'Sphere' }
-      return { countries, outline }
-    })
+/** Registers the bundled world map as `"world"` on this echarts instance. Safe to call repeatedly. */
+export function ensureWorldMap(echarts: any): Promise<void> {
+  if (!registered) {
+    registered = Promise.all([importWorldTopology(), import('topojson-client')]).then(
+      ([{ default: topology }, topojsonMod]) => {
+        const features = (topojsonMod as any).feature(topology, topology.objects.countries).features
+        echarts.registerMap('world', { type: 'FeatureCollection', features } as any)
+      },
+    )
   }
-  return worldPromise
-}
-
-function findCountry(countries: any[], name: string): any | null {
-  const norm = (s: string) => s.toLowerCase().trim()
-  const target = norm(name)
-  return countries.find((f) => norm(f.properties?.name ?? '') === target) ?? null
-}
-
-/**
- * Mutates a choropleth/bubbleMap config in place: resolves any string
- * `feature` values (choropleth) against the bundled world atlas, and fills
- * in a default `outline` (a world land mass) so bubbles/regions render on a
- * recognizable base map instead of a blank canvas. Leaves anything the
- * caller already set (a real GeoJSON feature, a custom outline) untouched.
- */
-export async function resolveGeoFeatures(config: any): Promise<void> {
-  const { countries, outline } = await loadWorldAtlas()
-  const datasets: any[] = config?.data?.datasets ?? []
-
-  // chartjs-chart-geo defaults to 'albersUsa' -- a projection defined only
-  // for the continental US, which maps every other country's coordinates
-  // off-canvas (or to nothing) rather than merely distorting them. A world
-  // projection is the only sane default for a chart type an AI can point at
-  // any country.
-  config.options = config.options ?? {}
-  config.options.scales = config.options.scales ?? {}
-  // Chart.js 4.5.x's scale-merge step calls determineAxis() on our supplied
-  // partial scale config before merging in the controller's own overrides
-  // (which normally supply axis/type for this key) -- a plain
-  // `{ projection: '...' }` throws there. Supply axis/type explicitly
-  // ourselves rather than depend on that merge order.
-  config.options.scales.projection = {
-    axis: 'x',
-    type: 'projection',
-    projection: 'naturalEarth1',
-    ...config.options.scales.projection,
-  }
-
-  datasets.forEach((ds) => {
-    if (ds.outline === undefined) ds.outline = outline
-
-    if (config.type === 'choropleth') {
-      ds.data = (ds.data ?? []).map((d: any) => {
-        if (d && typeof d.feature === 'string') {
-          const resolved = findCountry(countries, d.feature)
-          return resolved ? { ...d, feature: resolved } : d
-        }
-        return d
-      })
-    }
-  })
+  return registered
 }

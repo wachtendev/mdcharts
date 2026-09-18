@@ -14,30 +14,37 @@ Revenue is up **8.1%** this month and ahead of target — Northwind is carrying 
 ::: card Revenue vs. target
 ```chart
 {
-  "type": "line",
-  "data": {
-    "labels": ["Apr", "May", "Jun", "Jul", "Aug", "Sep"],
-    "datasets": [
-      { "label": "Actual", "data": [38200, 41100, 43900, 46200, 47800, 51200] },
-      { "label": "Target", "data": [39000, 41000, 43000, 45000, 47000, 49000], "borderDash": [6, 4] }
-    ]
-  },
-  "options": {
-    "plugins": {
-      "annotation": {
-        "annotations": {
-          "target-line": { "type": "line", "yMin": 49000, "yMax": 49000, "borderDash": [4, 4], "label": { "display": true, "content": "Q3 target" } }
-        }
-      }
-    }
-  }
+  "xAxis": { "type": "category", "data": ["Apr", "May", "Jun", "Jul", "Aug", "Sep"] },
+  "yAxis": { "type": "value" },
+  "legend": {},
+  "tooltip": { "trigger": "axis" },
+  "series": [
+    {
+      "name": "Actual",
+      "type": "line",
+      "data": [38200, 41100, 43900, 46200, 47800, 51200],
+      "markLine": { "symbol": "none", "data": [{ "yAxis": 49000, "lineStyle": { "type": "dashed" }, "label": { "formatter": "Q3 target" } }] }
+    },
+    { "name": "Target", "type": "line", "data": [39000, 41000, 43000, 45000, 47000, 49000], "lineStyle": { "type": "dashed" } }
+  ]
 }
 ```
 :::
 
 ::: card Revenue share by shop
 ```chart
-{ "type": "doughnut", "data": { "labels": ["Northwind", "Acme", "Fabrikam", "Contoso"], "datasets": [{ "data": [42, 27, 19, 12] }] } }
+{
+  "series": [{
+    "type": "pie",
+    "radius": ["40%", "70%"],
+    "data": [
+      { "name": "Northwind", "value": 42 },
+      { "name": "Acme", "value": 27 },
+      { "name": "Fabrikam", "value": 19 },
+      { "name": "Contoso", "value": 12 }
+    ]
+  }]
+}
 ```
 :::
 

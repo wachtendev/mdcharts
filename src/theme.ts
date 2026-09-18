@@ -13,14 +13,17 @@ export interface BrandPalette {
   danger: string
 }
 
+// Muted, lower-chroma tones rather than saturated primaries -- reads as a
+// professional reporting dashboard by default, not a marketing site. Hosts
+// with their own CI still override every one of these (see resolvePalette).
 const FALLBACK: BrandPalette = {
-  brand: ['#7c3aed', '#0ea5e9', '#14b8a6', '#f59e0b', '#ef4444', '#6366f1'],
+  brand: ['#4A6FA5', '#6B9080', '#B8834A', '#8E7CC3', '#4F9DA6', '#A6685C'],
   surface: '#ffffff',
-  text: '#0f172a',
+  text: '#1e293b',
   grid: '#e2e8f0',
-  success: '#16a34a',
-  warn: '#d97706',
-  danger: '#dc2626',
+  success: '#5B8C5A',
+  warn: '#B8863B',
+  danger: '#B85C5C',
 }
 
 let overridePalette: Partial<BrandPalette> | null = null

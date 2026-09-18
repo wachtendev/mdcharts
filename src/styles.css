@@ -3,18 +3,20 @@
    fallbacks so the component isn't unstyled out of the box. */
 
 .mdchart-root {
-  --mdchart-brand-1: #7c3aed;
-  --mdchart-brand-2: #0ea5e9;
-  --mdchart-brand-3: #14b8a6;
-  --mdchart-brand-4: #f59e0b;
+  --mdchart-brand-1: #4A6FA5;
+  --mdchart-brand-2: #6B9080;
+  --mdchart-brand-3: #B8834A;
+  --mdchart-brand-4: #8E7CC3;
+  --mdchart-brand-5: #4F9DA6;
+  --mdchart-brand-6: #A6685C;
   --mdchart-surface: #ffffff;
   --mdchart-panel: #f6f5f2;
   --mdchart-text: #1c1b18;
   --mdchart-text-muted: #6b6862;
   --mdchart-grid: #dedbd3;
-  --mdchart-success: #2f6846;
-  --mdchart-warn: #8a5a12;
-  --mdchart-danger: #9a2340;
+  --mdchart-success: #4d7d4c;
+  --mdchart-warn: #96692c;
+  --mdchart-danger: #954848;
 
   font-family: 'Public Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   color: var(--mdchart-text);
@@ -279,6 +281,6 @@
 }
 
 .mdchart-root :focus-visible {
-  outline: 2px solid var(--mdchart-brand-1, #7c3aed);
+  outline: 2px solid var(--mdchart-brand-1, #4A6FA5);
   outline-offset: 2px;
 }

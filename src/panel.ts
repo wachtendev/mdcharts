@@ -95,7 +95,7 @@ export class MdDetailPanel extends HTMLElement {
    * properties resolved off this panel, and a clone of the panel where
    * every <canvas> is replaced by a rasterized <img> -- innerHTML/cloneNode
    * never carries a canvas's drawn pixels, and the clone lives outside the
-   * document Chart.js is managing anyway.
+   * document ECharts is managing anyway.
    */
   private printPanel() {
     const clone = this.view.cloneNode(true) as HTMLElement

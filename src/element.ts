@@ -64,14 +64,10 @@ export class MdChartView extends HTMLElement {
     const token = ++this.renderToken
     renderMarkdown(this._source, this._options).then((html) => {
       if (token !== this.renderToken || !this.isConnected) return
-      // Destroy the previous render's Chart.js instances before discarding
-      // their canvases -- innerHTML replace alone orphans them. An orphaned
-      // instance stays queued in Chart.js's *shared* animation loop, and if
-      // any one of them throws on a later frame (third-party plugin bugs
-      // included -- chartjs-plugin-annotation has a known init-order one),
-      // it can abort that shared loop for every other chart too, not just
-      // the orphaned one. This is what "open one report, then another, and
-      // all charts stop rendering" was.
+      // Dispose the previous render's ECharts instances before discarding
+      // their containers -- innerHTML replace alone orphans them, and an
+      // orphaned instance keeps its resize listener and animation frames
+      // alive with nowhere to draw.
       unmountCharts(this)
       this.innerHTML = html
       mountStatCards(this)

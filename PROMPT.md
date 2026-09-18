@@ -20,7 +20,7 @@ payment though — worth a look.
 # Revenue — last 30 days
 
 ```chart
-{ "type": "line", "data": { ... } }
+{ "xAxis": {...}, "yAxis": {...}, "series": [{ "type": "line", "data": [...] }] }
 ```
 
 | Order | Status |
@@ -32,57 +32,61 @@ payment though — worth a look.
 Only add `<extended-info-md>` when there is real detail to show — a plain
 answer needs nothing extra.
 
-## Charts — a ```chart fence with a Chart.js config
+## Charts — a ```chart fence with an ECharts `option`
 
 ```chart
 {
-  "type": "bar",
-  "data": {
-    "labels": ["Jan", "Feb", "Mar"],
-    "datasets": [{ "label": "Revenue", "data": [42100, 47800, 48250] }]
-  }
+  "xAxis": { "type": "category", "data": ["Jan", "Feb", "Mar"] },
+  "yAxis": { "type": "value" },
+  "series": [{ "name": "Revenue", "type": "bar", "data": [42100, 47800, 48250] }]
 }
 ```
 
-- The body is a normal [Chart.js](https://www.chartjs.org/docs/latest/) config
-  object: `{ "type", "data", "options" }`. `options` is optional.
-- **Omit colors.** Don't set `backgroundColor`, `borderColor`, or any
-  legend/scale color — the renderer applies the host's brand palette
-  automatically: one color per series for `bar`/`line`/etc., one color per
-  slice for `pie`/`doughnut`/`polarArea`/`funnel`/`venn`. Setting a color
-  yourself overrides that, so only do it when you specifically need a fixed
-  color (e.g. calling out one bad month in red).
-- **Omit sizing options** (`responsive`, `maintainAspectRatio`) — handled for you.
+- The body is a normal [Apache ECharts](https://echarts.apache.org/en/option.html)
+  `option` object — whatever you'd pass to `chart.setOption(...)`. There's no
+  separate `type`/`data` wrapper: each entry in `series` carries its own
+  `type`, and a chart can mix several.
+- **Omit colors.** Don't set `color`, `itemStyle.color`, `textStyle.color`, or
+  axis line/label colors — the renderer fills in the host's brand palette
+  automatically: one color per series/category for most types, a sequential
+  ramp (via `visualMap`) for value-colored types (`heatmap`, `map`). Setting a
+  color yourself overrides that, so only do it when you specifically need a
+  fixed color (e.g. calling out one bad month in red).
+- **Omit sizing** (`width`, `height`, `grid`) — handled for you; the chart
+  fills its container.
 - Full JSON Schema: `schemas/chart.schema.json`.
 
-### Supported `type` values
+### Supported `series[].type` values
 
-Core: `bar`, `line`, `pie`, `doughnut`, `radar`, `polarArea`, `scatter`, `bubble`.
+Core: `bar`, `line`, `pie`, `scatter`, `radar`, `boxplot`, `candlestick`.
 
-Extended (each needs a different `data.datasets[].data` element shape — see
-the schema's conditional branches before using one):
+Extended (each needs a shape that differs from the norm — see the schema's
+conditional branches before using one):
 
 | type | data shape | use for |
 |---|---|---|
-| `sankey` | `{from, to, flow}` | flow between stages (checkout funnel by step, traffic → channel → category) |
-| `treemap` | normal, colored by value | revenue by category/SKU |
-| `matrix` | `{x, y, v}` | orders by weekday × hour |
-| `wordCloud` | `labels` + numeric weights | top search terms |
-| `funnel` | normal | conversion funnel |
-| `venn` / `euler` | `{sets, size}` | segment overlap |
-| `forceDirectedGraph` | `labels` + `edges: [{source, target}]`, no x/y needed | recommendation networks (layout is automatic — prefer this over plain `graph`) |
-| `graph` / `tree` / `dendrogram` | like `forceDirectedGraph`, but `graph` needs explicit `{x, y}` per node (no auto-layout); `tree`/`dendrogram` use `parent` instead of `edges` | manually-laid-out or hierarchical node graphs |
-| `choropleth` | `{feature: "Germany", value}` — a plain country **name**, never raw GeoJSON | sales by country |
-| `bubbleMap` | `{longitude, latitude, value}` | sales by exact location (shipping hubs, warehouses) |
-| `boxplot` / `violin` | normal | distribution (basket size) |
-| `candlestick` / `ohlc` | `{x, o, h, l, c}` | price history |
-| `pcp` | **one dataset per axis** (`labels` names the rows, each dataset is `{label: axisName, data: [...]}` — not one dataset of multi-key row objects) | multi-attribute comparison |
-| `barWithErrorBars` etc. | `{y, yMin, yMax}` | a value with a range (delivery time ± variance) |
+| `heatmap` | `[xIndex, yIndex, value]` triples + category `xAxis`/`yAxis` | orders by weekday × hour |
+| `treemap` | `{name, value, children}`, nested | revenue by category/SKU |
+| `sunburst` | like `treemap` but radial | the same, as a ring instead of boxes |
+| `funnel` | `{name, value}` | conversion funnel |
+| `sankey` | top-level `data: [{name}]` + `links: [{source, target, value}]` | flow between stages (checkout funnel by step, traffic → channel → category) |
+| `graph` | `data: [{name, value?}]` + `links: [{source, target}]`; add `"layout": "force"` for automatic layout, `"layout": "none"` with explicit `{x, y}` per node otherwise | recommendation networks, org charts |
+| `tree` | one root `{name, children: [...]}` | hierarchical breakdowns (dendrograms) |
+| `map` | `data: [{name: "Germany", value}]` — a plain country **name**, never raw GeoJSON | sales by country (choropleth) |
+| `scatter` on a `geo` coordinate system (top-level `"geo": {}`) | `{name, value: [lng, lat, size]}` | sales by exact location (shipping hubs, warehouses) |
+| `parallel` | top-level `parallelAxis: [{dim, name}, ...]` + `series[0].data: [[v1, v2, ...], ...]` | multi-attribute comparison |
+| `themeRiver` | `[date, value, name]` triples | a metric's mix over time by category |
+| `wordCloud` | `{name, value}` | top search terms |
+| `gauge` | `{value, name}` | a single metric against a 0–100 (or custom) range |
 
-### Plugins
+### Target lines and highlights — no plugin needed
 
-Set `options.plugins.<name>` and it loads automatically: `datalabels`,
-`annotation` (target lines), `zoom`, `trendline`. Only ask for what you use.
+ECharts has these built into every cartesian series — set them directly on
+the series, no extra setup:
+
+- `markLine: { data: [{ yAxis: 49000, label: { formatter: "Q3 target" } }] }` — a target/threshold line.
+- `markPoint: { data: [{ type: "max", name: "peak" }] }` — call out a specific point.
+- `markArea: { data: [[{ xAxis: "Apr" }, { xAxis: "Jun" }]] }` — shade a range.
 
 ## A single number — a ```statcard fence
 
@@ -113,7 +117,7 @@ long scroll:
 ```
 ::: card Revenue vs. target
 ```chart
-{ "type": "line", "data": { ... } }
+{ "xAxis": {...}, "yAxis": {...}, "series": [{ "type": "line", "data": [...] }] }
 ```
 :::
 ```
