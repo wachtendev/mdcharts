@@ -494,6 +494,34 @@ The gallery's remaining examples are mostly these techniques applied to the
 series types above, not new types of their own — same `series[].type`, a
 different combination of standard `option` fields.
 
+### Cards beside each other — `::: cards`
+
+Small/square charts (a gauge, a funnel, a small pie) crowd less and read
+better placed beside each other instead of stacked one per row. Wrap two or
+more `::: card` blocks in `::: cards` for that; each stays full-width when
+the panel is narrow and lines up in a row once there's room, same as the
+stat cards' own layout.
+
+:::: cards
+::: card On-time rate
+```chart
+{ "series": [{ "type": "gauge", "data": [{ "value": 94, "name": "On-time" }], "detail": { "formatter": "{value}%" } }] }
+```
+:::
+
+::: card Checkout funnel
+```chart
+{ "series": [{ "type": "funnel", "data": [{ "name": "Viewed", "value": 18400 }, { "name": "Added to cart", "value": 6200 }, { "name": "Paid", "value": 2480 }] }] }
+```
+:::
+
+::: card Traffic split
+```chart
+{ "series": [{ "type": "pie", "radius": ["40%", "70%"], "data": [{ "name": "Organic", "value": 62 }, { "name": "Paid", "value": 38 }] }] }
+```
+:::
+::::
+
 ### Dual Y-axis (two different scales in one chart)
 
 ```chart
@@ -607,11 +635,22 @@ different combination of standard `option` fields.
 }
 ```
 
-Not covered: ECharts' `custom` series (`renderItem`) needs a JavaScript
-*function* to draw each data point — there's no JSON representation of a
-function, so it can't be expressed in a fence at all without breaking the
-"strict JSON, never eval'd" rule every other chart type relies on (see
-`src/md.ts` and `PROMPT.md`). 3D charts (`echarts-gl`: `bar3D`, `scatter3D`,
-`surface`, `globe`) aren't wired in either — a much heavier optional
-dependency for a chart family that doesn't fit a text chat panel well; ask if
-you want it added the same way `wordCloud`/`liquidFill` are.
+Not covered:
+
+- `chord` and `matrix` -- both new in ECharts 6 -- were tried here and
+  dropped. Both share one broken code path: `registerInternalOptionCreator`
+  throws an internal assertion error the first time either series type is
+  used, reproducible even outside mdchart with a plain
+  `echarts.init().setOption()` call, and after that first throw `chord`
+  renders a blank canvas with no error at all rather than the intended
+  circular-flow diagram. This looks like a genuine bug in the 6.1.0 package
+  rather than anything on our end; revisit once a patch release fixes it.
+- ECharts' `custom` series (`renderItem`) needs a JavaScript *function* to
+  draw each data point — there's no JSON representation of a function, so it
+  can't be expressed in a fence at all without breaking the "strict JSON,
+  never eval'd" rule every other chart type relies on (see `src/md.ts` and
+  `PROMPT.md`).
+- 3D charts (`echarts-gl`: `bar3D`, `scatter3D`, `surface`, `globe`) aren't
+  wired in either — a much heavier optional dependency for a chart family
+  that doesn't fit a text chat panel well; ask if you want it added the same
+  way `wordCloud`/`liquidFill` are.

@@ -148,6 +148,35 @@ long scroll:
   section — reach for it when you're presenting more than one distinct block
   and want each visually separated, the way the stat cards already look.
 
+### Placing cards beside each other — `::: cards`
+
+Wrap two or more `::: card` blocks in `::: cards` to lay them out side by
+side instead of stacked, wrapping to a new row once they don't fit. Give the
+outer wrapper **one more colon than the inner cards** (`::::` outside,
+`:::` inside) — same marker length on both closes the first inner card *and*
+the outer wrapper together, cutting off everything after it:
+
+```
+:::: cards
+::: card Order status
+```chart
+{ "series": [{ "type": "gauge", "data": [{ "value": 94 }] }] }
+```
+:::
+
+::: card Segment mix
+```chart
+{ "series": [{ "type": "pie", "radius": ["40%","70%"], "data": [...] }] }
+```
+:::
+::::
+```
+
+Reach for this with small or square charts — gauges, funnels, small
+pies/donuts — not with anything wide (sankey, parallel, a map, a long time
+series): those already get their own full-width row, and cramming one into a
+narrow grid column just squashes it.
+
 ## Status tables — just write a normal markdown table
 
 No special syntax. Two things happen automatically:
