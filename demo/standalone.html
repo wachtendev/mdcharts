@@ -1,0 +1,54 @@
+<!doctype html>
+<!--
+  Deliberately bare: no host fonts, no host layout CSS, no CI palette
+  override -- only mdchart's own styles.css and the custom element. Proves
+  the component is self-contained: readable, themed, and charted with only
+  its own built-in fallback palette (src/theme.ts's FALLBACK), not anything
+  a host page happens to provide.
+-->
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <md-chart-view></md-chart-view>
+  <script type="module">
+    import { defineMdChart } from '/src/index.ts'
+    defineMdChart()
+    const view = document.querySelector('md-chart-view')
+    view.classList.add('mdchart-root')
+    view.source = `# Revenue — last 30 days
+
+::: card Revenue vs. target
+\`\`\`chart
+{
+  "type": "line",
+  "data": {
+    "labels": ["Apr", "May", "Jun"],
+    "datasets": [
+      { "label": "Actual", "data": [38200, 41100, 43900] },
+      { "label": "Target", "data": [39000, 41000, 43000], "borderDash": [6, 4] }
+    ]
+  },
+  "options": {
+    "plugins": {
+      "annotation": {
+        "annotations": {
+          "target-line": { "type": "line", "yMin": 43000, "yMax": 43000, "borderDash": [4, 4], "label": { "display": true, "content": "Q3 target" } }
+        }
+      }
+    }
+  }
+}
+\`\`\`
+:::
+
+| Shop | Revenue | Status |
+|---|---|---|
+| Northwind | €21,504 | paid |
+| Acme | €13,824 | pending |
+`
+  </script>
+</body>
+</html>

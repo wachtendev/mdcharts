@@ -201,9 +201,45 @@ export async function resolveLocalPlugins(pluginKeys: string[]): Promise<any[]> 
   const resolved = await Promise.all(
     pluginKeys
       .filter((key) => key in LOCAL_PLUGIN_LOADERS)
-      .map((key) => {
+      .map(async (key) => {
         if (!localPluginCache.has(key)) localPluginCache.set(key, LOCAL_PLUGIN_LOADERS[key]())
-        return localPluginCache.get(key)!
+        const plugin = await localPluginCache.get(key)!
+        // Chart.register(plugin) does two independent things: it wires the
+        // plugin's lifecycle hooks to run on every chart (the part we're
+        // avoiding -- see LOCAL_PLUGIN_LOADERS above), and, as a side
+        // effect, it merges plugin.defaults into Chart.defaults.plugins.<id>
+        // (chart.js's TypedRegistry.register -> registerDefaults). Skipping
+        // registration skips that merge too. It's usually harmless (options
+        // just resolve to hardcoded fallbacks instead), but
+        // chartjs-plugin-annotation's own annotation *elements* (line, box,
+        // label, ...) declare their fallback route as
+        // `plugins.annotation.common` (see its `defaults.describe(...)`
+        // call, itself module-top-level and so unaffected by any of this),
+        // and an unmerged, undefined `common` crashes on first draw
+        // ("Cannot read properties of undefined (reading 'borderCapStyle')").
+        // Replicate just the defaults merge here -- pure data, no hooks, so
+        // it's safe to do globally regardless of which charts use the
+        // plugin -- without going through the unsafe Chart.register(plugin)
+        // path that would also wire up its hooks.
+        if (!registered.has(`plugin-defaults:${key}`)) {
+          // resolveLocalPlugins can run concurrently with ensureChartType
+          // (chart.ts awaits both via Promise.all) -- await loadChart()
+          // directly rather than getChart(), which throws until Chart.js
+          // has actually resolved.
+          const Chart = (await loadChart()) as any
+          if (plugin.defaults) Chart.defaults.set(`plugins.${plugin.id ?? key}`, plugin.defaults)
+          if (plugin.descriptors) Chart.defaults.describe(`plugins.${plugin.id ?? key}`, plugin.descriptors)
+          // chartjs-plugin-annotation also declares its own annotation
+          // *element types* (line, box, label, ...) and only registers
+          // them -- via Chart.register(annotationTypes) -- from its own
+          // afterRegister() hook, which normally only runs when the plugin
+          // itself is registered. Registering element *types* is exposing
+          // data classes, not wiring up hooks, so it's safe to call
+          // directly here too.
+          plugin.afterRegister?.()
+          registered.add(`plugin-defaults:${key}`)
+        }
+        return plugin
       }),
   )
   return resolved.filter(Boolean)

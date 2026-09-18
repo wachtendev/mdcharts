@@ -247,39 +247,13 @@
 .mdchart-panel-download svg { width: 16px; height: 16px; }
 .mdchart-panel-close:hover, .mdchart-panel-download:hover { background: var(--mdchart-panel); color: var(--mdchart-text); }
 
-/* Only active while the panel's own download button triggers window.print()
-   (see panel.ts) -- never a blanket @media print, so a host page printing
-   itself some other way is unaffected by this component being on the page. */
-@media print {
-  body.mdchart-printing > :not(.mdchart-panel) { display: none !important; }
-  body.mdchart-printing .mdchart-panel {
-    position: static !important;
-    inset: auto !important;
-    transform: none !important;
-    opacity: 1 !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    width: auto !important;
-    max-width: none !important;
-    height: auto !important;
-  }
-  body.mdchart-printing .mdchart-panel-close,
-  body.mdchart-printing .mdchart-panel-download,
-  body.mdchart-printing .mdchart-panel-backdrop {
-    display: none !important;
-  }
-  body.mdchart-printing .mdchart-panel md-chart-view {
-    overflow: visible !important;
-    height: auto !important;
-  }
-  /* Charts keep a fixed height in print too -- letting this go to `auto`
-     collapses the container out from under the canvas, which is what was
-     producing the "warped" export (see resizeChartsForPrint in chart.ts). */
-  body.mdchart-printing .mdchart-chart {
-    height: 280px !important;
-    break-inside: avoid;
-  }
-}
+/* No @media print block here: the download button (see panel.ts) prints an
+   isolated iframe document instead of this page, so a host page printing
+   itself some other way is never affected by this component being on the
+   page, and this component's print output is never affected by the host's
+   own print styles either -- this chat embeds on multiple different pages,
+   each with its own CSS, and a shared @media print block here would have
+   to fight whatever each of those already does on print. */
 
 .mdchart-panel-backdrop {
   position: fixed;
