@@ -1,4 +1,5 @@
 import { MdChartView, defineMdChartView } from './element.ts'
+import { resizeChartsForPrint } from './chart.ts'
 
 /**
  * <md-detail-panel><md-chart-view></md-chart-view></md-detail-panel>
@@ -47,6 +48,10 @@ export class MdDetailPanel extends HTMLElement {
     // printing itself some other way is never affected by this component.
     downloadBtn.addEventListener('click', () => {
       document.body.classList.add('mdchart-printing')
+      // Force the print layout to settle, then resize charts to it, before
+      // calling print() -- see resizeChartsForPrint's comment for why.
+      this.view.offsetHeight
+      resizeChartsForPrint(this.view)
       window.print()
     })
     window.addEventListener('afterprint', () => document.body.classList.remove('mdchart-printing'))

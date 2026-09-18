@@ -295,6 +295,25 @@ async function mountOne(container: HTMLElement) {
   }
 }
 
+/**
+ * Forces every chart instance under `root` to resize synchronously. Call
+ * right before `window.print()`: the ResizeObserver-driven resize charts
+ * normally rely on doesn't get a chance to fire before print's own layout
+ * pass, so without this the canvases print at their last on-screen pixel
+ * size/aspect ratio instead of the print layout's -- the "warped" export.
+ */
+export function resizeChartsForPrint(root: ParentNode): void {
+  root.querySelectorAll<HTMLElement>('.mdchart-chart').forEach((container) => {
+    const entry = mounted.get(container)
+    if (!entry) return
+    try {
+      entry.instance.resize()
+    } catch (err) {
+      console.error('mdchart: chart resize before print failed (continuing):', err)
+    }
+  })
+}
+
 /** Destroys every chart instance mounted under `root`. Call before discarding the DOM subtree wholesale (e.g. before a `v-html` replace) to avoid leaking canvases. */
 export function unmountCharts(root: ParentNode): void {
   root.querySelectorAll<HTMLElement>('.mdchart-chart').forEach((container) => {

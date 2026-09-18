@@ -272,6 +272,13 @@
     overflow: visible !important;
     height: auto !important;
   }
+  /* Charts keep a fixed height in print too -- letting this go to `auto`
+     collapses the container out from under the canvas, which is what was
+     producing the "warped" export (see resizeChartsForPrint in chart.ts). */
+  body.mdchart-printing .mdchart-chart {
+    height: 280px !important;
+    break-inside: avoid;
+  }
 }
 
 .mdchart-panel-backdrop {
