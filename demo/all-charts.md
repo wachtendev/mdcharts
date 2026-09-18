@@ -494,6 +494,29 @@ The gallery's remaining examples are mostly these techniques applied to the
 series types above, not new types of their own — same `series[].type`, a
 different combination of standard `option` fields.
 
+### dataZoom (pan/zoom a long time series)
+
+A slider (and/or scroll-to-zoom on the chart itself) for a series with more
+points than fit comfortably at once — a daily series over months, an
+intraday feed. Set an initial `start`/`end` window and the reader can drag
+to see the rest.
+
+```chart
+{
+  "tooltip": { "trigger": "axis" },
+  "xAxis": { "type": "category", "boundaryGap": false, "data": ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15", "Day 16", "Day 17", "Day 18", "Day 19", "Day 20", "Day 21", "Day 22", "Day 23", "Day 24", "Day 25", "Day 26", "Day 27", "Day 28", "Day 29", "Day 30"] },
+  "yAxis": { "type": "value" },
+  "dataZoom": [
+    { "type": "inside", "start": 60, "end": 100 },
+    { "type": "slider", "start": 60, "end": 100 }
+  ],
+  "series": [{
+    "type": "line",
+    "data": [1820,1910,1795,2040,2110,1980,2205,2260,2190,2340,2410,2380,2510,2470,2600,2580,2650,2720,2690,2810,2790,2860,2900,2870,2940,3010,2980,3050,3090,3120]
+  }]
+}
+```
+
 ### Cards beside each other — `::: cards`
 
 Small/square charts (a gauge, a funnel, a small pie) crowd less and read
