@@ -24,6 +24,7 @@
   "peerDependencies": {
     "@shikijs/markdown-it": "^4.0.0",
     "echarts": "^5.5.0",
+    "echarts-liquidfill": "^3.1.0",
     "echarts-wordcloud": "^2.1.0",
     "markdown-it-container": "^4.0.0",
     "markdown-it-deflist": "^4.0.0",
@@ -63,6 +64,9 @@
     "echarts-wordcloud": {
       "optional": true
     },
+    "echarts-liquidfill": {
+      "optional": true
+    },
     "topojson-client": {
       "optional": true
     },
@@ -74,6 +78,7 @@
     "@shikijs/markdown-it": "^4.0.0",
     "canvas": "^3.2.3",
     "echarts": "^5.5.0",
+    "echarts-liquidfill": "^3.1.0",
     "echarts-wordcloud": "^2.1.0",
     "jsdom": "^30.0.1",
     "markdown-it-container": "^4.0.0",

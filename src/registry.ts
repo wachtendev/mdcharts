@@ -1,10 +1,11 @@
-// ECharts ships every chart type (line, bar, pie, scatter, radar, boxplot,
-// candlestick, heatmap, treemap, sunburst, graph, sankey, funnel, gauge,
-// parallel, tree, themeRiver, pictorialBar, map, ...) in one package with no
-// per-type registration step -- unlike Chart.js's core+extension-per-package
-// model, there's no registry to build here. The only two things that still
-// need lazy setup are the word-cloud series type (a separate optional
-// package that self-registers into this same echarts instance) and the
+// ECharts ships every native chart type (line, bar, pie, scatter, radar,
+// boxplot, candlestick, heatmap, treemap, sunburst, graph, sankey, funnel,
+// gauge, parallel, tree, themeRiver, pictorialBar, map, custom, ...) in one
+// package with no per-type registration step -- unlike Chart.js's
+// core+extension-per-package model, there's no registry to build here. The
+// only things that still need lazy setup are the couple of series types
+// that live in a separate optional package and self-register into this same
+// echarts instance on import (word clouds, liquid-fill gauges), and the
 // world map GeoJSON a `map`/`geo` series needs (see geo.ts).
 
 let echartsPromise: Promise<any> | null = null
@@ -20,6 +21,7 @@ const extensionLoaded = new Set<string>()
 /** Series types that need an optional peer package loaded before use, keyed by `series[].type`. */
 const SERIES_EXTENSIONS: Record<string, () => Promise<any>> = {
   wordCloud: () => import('echarts-wordcloud'),
+  liquidFill: () => import('echarts-liquidfill'),
 }
 
 /** Loads whichever optional series-type extensions `seriesTypes` actually needs. Idempotent. */

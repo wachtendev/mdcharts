@@ -473,3 +473,26 @@ every type. See `PROMPT.md` for the full authoring contract.
   }]
 }
 ```
+
+## Liquid fill gauge
+
+```chart
+{
+  "series": [{
+    "type": "liquidFill",
+    "data": [0.72, 0.68, 0.63],
+    "radius": "80%",
+    "outline": { "show": false },
+    "label": { "formatter": "72%" }
+  }]
+}
+```
+
+Not covered: ECharts' `custom` series (`renderItem`) needs a JavaScript
+*function* to draw each data point — there's no JSON representation of a
+function, so it can't be expressed in a fence at all without breaking the
+"strict JSON, never eval'd" rule every other chart type relies on (see
+`src/md.ts` and `PROMPT.md`). 3D charts (`echarts-gl`: `bar3D`, `scatter3D`,
+`surface`, `globe`) aren't wired in either — a much heavier optional
+dependency for a chart family that doesn't fit a text chat panel well; ask if
+you want it added the same way `wordCloud`/`liquidFill` are.

@@ -78,6 +78,12 @@ conditional branches before using one):
 | `themeRiver` | `[date, value, name]` triples | a metric's mix over time by category |
 | `wordCloud` | `{name, value}` | top search terms |
 | `gauge` | `{value, name}` | a single metric against a 0–100 (or custom) range |
+| `liquidFill` | array of 0–1 fill ratios | the same, drawn as a filling container |
+
+Not supported: `custom` (ECharts' `renderItem` API needs a JavaScript
+function, which has no JSON form — incompatible with this fence's strict,
+never-eval'd JSON contract) and the `echarts-gl` 3D chart family
+(`bar3D`/`scatter3D`/`surface`/`globe`), not wired in by default.
 
 ### Target lines and highlights — no plugin needed
 

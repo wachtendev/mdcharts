@@ -85,6 +85,15 @@ function applyPalette(option: any, palette: BrandPalette, types: string[]) {
   option.textStyle = { color: palette.text, ...option.textStyle }
   option.backgroundColor = option.backgroundColor ?? 'transparent'
 
+  // liquidFill ignores the top-level `color` array every other series reads
+  // -- it needs its own `series.color`.
+  if (types.includes('liquidFill')) {
+    const series = Array.isArray(option.series) ? option.series : [option.series]
+    series.forEach((s: any) => {
+      if (s.type === 'liquidFill' && !s.color) s.color = [categoricalColor(palette, 0)]
+    })
+  }
+
   if (option.legend) option.legend = { textStyle: { color: palette.text }, ...option.legend }
   if (option.title) {
     const titles = Array.isArray(option.title) ? option.title : [option.title]

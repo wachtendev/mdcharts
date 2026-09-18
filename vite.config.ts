@@ -16,6 +16,7 @@ export default defineConfig({
       external: [
         'echarts',
         'echarts-wordcloud',
+        'echarts-liquidfill',
         'shiki',
         '@shikijs/markdown-it',
         'mermaid',
