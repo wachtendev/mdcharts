@@ -2,12 +2,9 @@ import { defineConfig } from 'vite'
 import { resolve } from 'node:path'
 
 export default defineConfig({
-  optimizeDeps: {
-    esbuildOptions: { target: 'esnext' },
-  },
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: resolve(import.meta.dirname, 'src/index.ts'),
       name: 'mdchart',
       fileName: () => 'mdchart.js',
       formats: ['es'],

@@ -43,16 +43,28 @@ async function ensureExtras() {
             return '</div></div>\n'
           },
         })
-        // `::: cards` -- a row of `::: card` blocks (nest them inside).
-        // Renders as an auto-fit grid, the same layout the ```statcard fence
-        // already uses: cards sit beside each other while they fit (a couple
-        // of small/square charts -- a gauge, a small pie, a funnel) and wrap
-        // to their own row once they don't, with no fixed column count to
-        // get wrong for either a 2-card or a 5-card row.
+        // `::: cards [ratio]` -- a row of `::: card` blocks (nest them
+        // inside). With no ratio it's an auto-fit grid, the same layout the
+        // ```statcard fence already uses: cards sit beside each other while
+        // they fit and wrap to their own row once they don't, with no fixed
+        // column count to get wrong for either a 2-card or a 5-card row.
+        // An explicit ratio pins the column count/widths instead of letting
+        // them wrap: `2:1` is two columns, the first twice the second's
+        // width; `3` is three equal columns.
         md.use(m.default, 'cards', {
-          validate: (params: string) => params.trim() === 'cards',
+          validate: (params: string) => /^cards(\s+[\d:]+)?$/.test(params.trim()),
           render(tokens: any[], idx: number) {
-            return tokens[idx].nesting === 1 ? '<div class="mdchart-card-row">\n' : '</div>\n'
+            if (tokens[idx].nesting !== 1) return '</div>\n'
+            const ratio = tokens[idx].info.trim().replace(/^cards\s*/, '').trim()
+            const weights = !ratio
+              ? null
+              : ratio.includes(':')
+                ? ratio.split(':').map((n: string) => Math.max(1, parseInt(n, 10) || 1))
+                : Array(Math.max(1, parseInt(ratio, 10) || 1)).fill(1)
+            const style = weights
+              ? ` style="grid-template-columns:${weights.map((w: number) => `${w}fr`).join(' ')}"`
+              : ''
+            return `<div class="mdchart-card-row"${style}>\n`
           },
         })
       }),

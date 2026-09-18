@@ -172,10 +172,38 @@ the outer wrapper together, cutting off everything after it:
 ::::
 ```
 
-Reach for this with small or square charts — gauges, funnels, small
-pies/donuts — not with anything wide (sankey, parallel, a map, a long time
-series): those already get their own full-width row, and cramming one into a
-narrow grid column just squashes it.
+By default the row auto-fits — equal-width columns that wrap once they run
+out of room, right for anywhere from two cards to five. Give `::: cards` an
+explicit ratio when you want a fixed, non-wrapping layout instead:
+
+- `:::: cards 1:1` — exactly two equal columns.
+- `:::: cards 2:1` — two columns, the first twice the second's width (a main
+  chart beside a smaller supporting one).
+- `:::: cards 3` — exactly three equal columns.
+
+A card's own title is optional here too, same as standalone `::: card` — mix
+titled and untitled cards in the same row freely.
+
+### When to use a single large card vs. a row of small ones
+
+Default to **one full-width `::: card` per chart** — that's the normal case,
+and it's what gives a wide chart (sankey, parallel, a map, a long time
+series, anything with a legend or many axis labels) the room it needs.
+
+Reach for `::: cards` (several small cards in a row) only when you have
+**two or more genuinely small, low-detail charts that belong together** —
+a handful of KPI-style gauges, a couple of small pies/donuts, a short
+funnel — the same judgment call as the ```statcard fence: don't reach for it
+just because a section has multiple charts, reach for it when each chart on
+its own would leave mostly empty space in a full-width row. A single small
+chart should still just be a normal `::: card`, not a one-item `::: cards`
+row.
+
+One gotcha specific to a gauge in a small card: **omit `name` on its data
+point.** A gauge draws its own name label plus the big `detail` value, both
+roughly centered — at a small card's compressed height those two collide.
+The card's own headline already says what the number is, so the gauge only
+needs `detail`.
 
 ## Status tables — just write a normal markdown table
 

@@ -505,7 +505,7 @@ stat cards' own layout.
 :::: cards
 ::: card On-time rate
 ```chart
-{ "series": [{ "type": "gauge", "data": [{ "value": 94, "name": "On-time" }], "detail": { "formatter": "{value}%" } }] }
+{ "series": [{ "type": "gauge", "data": [{ "value": 94 }], "detail": { "formatter": "{value}%" } }] }
 ```
 :::
 
@@ -521,6 +521,132 @@ stat cards' own layout.
 ```
 :::
 ::::
+
+#### Explicit ratio: `1:1` — two equal columns, one titled, one not
+
+Card titles are optional in a row too — this one pairs a titled card with a
+plain one, no headline:
+
+:::: cards 1:1
+::: card Repeat purchase rate
+```chart
+{ "series": [{ "type": "gauge", "data": [{ "value": 38 }], "detail": { "formatter": "{value}%" } }] }
+```
+:::
+
+::: card
+```chart
+{ "series": [{ "type": "pie", "radius": ["40%", "70%"], "data": [{ "name": "New", "value": 55 }, { "name": "Returning", "value": 45 }] }] }
+```
+:::
+::::
+
+#### Explicit ratio: `2:1` — a main chart beside a smaller supporting one
+
+:::: cards 2:1
+::: card Revenue by shop
+```chart
+{
+  "xAxis": { "type": "category", "data": ["Northwind", "Acme", "Fabrikam", "Contoso"] },
+  "yAxis": { "type": "value" },
+  "series": [{ "type": "bar", "data": [21504, 13824, 9728, 6144] }]
+}
+```
+:::
+
+::: card Share of total
+```chart
+{ "series": [{ "type": "pie", "radius": ["40%", "70%"], "data": [{ "name": "Northwind", "value": 42 }, { "name": "Rest", "value": 58 }] }] }
+```
+:::
+::::
+
+#### Explicit ratio: `3` — three equal columns, forced (no wrapping)
+
+:::: cards 3
+::: card Orders
+```chart
+{ "series": [{ "type": "gauge", "data": [{ "value": 1205 }], "min": 0, "max": 1500 }] }
+```
+:::
+
+::: card Returns
+```chart
+{ "series": [{ "type": "gauge", "data": [{ "value": 24 }], "min": 0, "max": 50 }] }
+```
+:::
+
+::: card Failed payments
+```chart
+{ "series": [{ "type": "gauge", "data": [{ "value": 3 }], "min": 0, "max": 20 }] }
+```
+:::
+::::
+
+### Large cards (the default for everything else)
+
+A single full-width `::: card` is the normal case, not the exception — reach
+for it any time one chart deserves its own headline and visual separation
+from the rest of the report, which is most of the time. Four variations back
+to back: with a headline and inline text around the chart, with a headline
+and no surrounding text, with inline text but no headline, and bare (no
+headline, no text — just the chart).
+
+::: card Weekly order volume vs. returns
+Returns held under 7% of order volume every week this quarter, with no
+single week standing out as an outlier.
+
+```chart
+{
+  "legend": {},
+  "tooltip": { "trigger": "axis" },
+  "xAxis": { "type": "category", "data": ["W1", "W2", "W3", "W4", "W5", "W6"] },
+  "yAxis": { "type": "value" },
+  "series": [
+    { "name": "Orders", "type": "bar", "data": [312, 340, 298, 355, 361, 344] },
+    { "name": "Returns", "type": "bar", "data": [18, 22, 15, 24, 19, 21] }
+  ]
+}
+```
+
+Week 5 was the strongest of the quarter on both orders and returns.
+:::
+
+::: card Support ticket categories
+```chart
+{
+  "tooltip": {},
+  "series": [{
+    "type": "sunburst",
+    "radius": [0, "90%"],
+    "data": [
+      { "name": "Shipping", "children": [{ "name": "Delayed", "value": 42 }, { "name": "Lost", "value": 9 }] },
+      { "name": "Billing", "children": [{ "name": "Refund", "value": 28 }, { "name": "Duplicate charge", "value": 6 }] },
+      { "name": "Product", "children": [{ "name": "Defect", "value": 15 }, { "name": "Missing part", "value": 5 }] }
+    ]
+  }]
+}
+```
+:::
+
+::: card
+Shipping delays are still the single biggest category, more than double any
+other subcategory.
+
+```chart
+{
+  "xAxis": { "type": "category", "data": ["Delayed", "Lost", "Refund", "Duplicate charge", "Defect", "Missing part"] },
+  "yAxis": { "type": "value" },
+  "series": [{ "type": "bar", "data": [42, 9, 28, 6, 15, 5] }]
+}
+```
+:::
+
+::: card
+```chart
+{ "series": [{ "type": "gauge", "data": [{ "value": 4.6 }], "min": 0, "max": 5, "detail": { "formatter": "{value} / 5" } }] }
+```
+:::
 
 ### Dual Y-axis (two different scales in one chart)
 
