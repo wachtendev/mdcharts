@@ -29,12 +29,21 @@ function hashString(s: string): string {
   return h.toString(36)
 }
 
+// A timeline chart (`{baseOption, timeline, options}`) carries its series
+// inside `baseOption`, not at the top level -- resolve to whichever object
+// actually holds `series` so type detection and palette application see it.
+function themeTarget(option: any): any {
+  return option?.baseOption ?? option
+}
+
 function seriesTypes(option: any): string[] {
+  option = themeTarget(option)
   const series = Array.isArray(option.series) ? option.series : option.series ? [option.series] : []
   return series.map((s: any) => s?.type).filter(Boolean)
 }
 
 function seriesValues(option: any): number[] {
+  option = themeTarget(option)
   const series = Array.isArray(option.series) ? option.series : option.series ? [option.series] : []
   const values: number[] = []
   for (const s of series) {
@@ -53,7 +62,8 @@ function seriesValues(option: any): number[] {
  * wins. `mdchartStrictBrand: false` opts a chart out of this entirely,
  * falling back to ECharts' own built-in palette instead.
  */
-function applyPalette(option: any, palette: BrandPalette, types: string[]) {
+function applyPalette(rawOption: any, palette: BrandPalette, types: string[]) {
+  const option = themeTarget(rawOption)
   const isValueColored = types.some((t) => VALUE_COLORED_TYPES.has(t))
 
   if (isValueColored && !option.visualMap) {
@@ -141,7 +151,7 @@ async function mountOne(container: HTMLElement) {
   let option: any
   try {
     option = JSON.parse(raw)
-    if (!option || typeof option !== 'object' || !option.series) {
+    if (!option || typeof option !== 'object' || !themeTarget(option).series) {
       throw new Error('missing series')
     }
   } catch {
@@ -163,11 +173,12 @@ async function mountOne(container: HTMLElement) {
     const types = seriesTypes(option)
     const echarts = await loadEcharts()
     await ensureSeriesExtensions(types)
-    if (types.includes('map') || option.geo) {
+    const target = themeTarget(option)
+    if (types.includes('map') || target.geo) {
       await ensureWorldMap(echarts)
-      const series = Array.isArray(option.series) ? option.series : [option.series]
+      const series = Array.isArray(target.series) ? target.series : [target.series]
       series.forEach((s: any) => { if (s.type === 'map') s.map = s.map ?? 'world' })
-      if (option.geo) option.geo.map = option.geo.map ?? 'world'
+      if (target.geo) target.geo.map = target.geo.map ?? 'world'
     }
 
     const palette = resolvePalette(container)

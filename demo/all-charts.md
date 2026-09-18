@@ -488,6 +488,125 @@ every type. See `PROMPT.md` for the full authoring contract.
 }
 ```
 
+## Compositions & layout patterns
+
+The gallery's remaining examples are mostly these techniques applied to the
+series types above, not new types of their own — same `series[].type`, a
+different combination of standard `option` fields.
+
+### Dual Y-axis (two different scales in one chart)
+
+```chart
+{
+  "legend": {},
+  "tooltip": { "trigger": "axis" },
+  "xAxis": { "type": "category", "data": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"] },
+  "yAxis": [
+    { "type": "value", "name": "Revenue (€)" },
+    { "type": "value", "name": "Conversion rate", "axisLabel": { "formatter": "{value}%" } }
+  ],
+  "series": [
+    { "name": "Revenue", "type": "bar", "data": [32000, 34500, 33100, 36800, 38200, 41100] },
+    { "name": "Conversion rate", "type": "line", "yAxisIndex": 1, "data": [2.1, 2.3, 2.0, 2.6, 2.8, 3.1] }
+  ]
+}
+```
+
+### Waterfall (stacked bar with a transparent base)
+
+```chart
+{
+  "tooltip": {},
+  "xAxis": { "type": "category", "data": ["Start", "New sales", "Upsell", "Churn", "Refunds", "End"] },
+  "yAxis": { "type": "value" },
+  "series": [
+    { "name": "base", "type": "bar", "stack": "wf", "itemStyle": { "color": "transparent" }, "data": [0, 51200, 62400, 62400, 58200, 0] },
+    { "name": "change", "type": "bar", "stack": "wf", "data": [51200, 11200, 4800, -4200, -3600, 58200] }
+  ]
+}
+```
+
+### Multiple grids (small multiples — one option, four mini charts)
+
+```chart
+{
+  "grid": [
+    { "left": "8%", "top": "10%", "width": "38%", "height": "35%" },
+    { "right": "8%", "top": "10%", "width": "38%", "height": "35%" },
+    { "left": "8%", "bottom": "8%", "width": "38%", "height": "35%" },
+    { "right": "8%", "bottom": "8%", "width": "38%", "height": "35%" }
+  ],
+  "xAxis": [
+    { "gridIndex": 0, "type": "category", "data": ["Q1", "Q2", "Q3", "Q4"] },
+    { "gridIndex": 1, "type": "category", "data": ["Q1", "Q2", "Q3", "Q4"] },
+    { "gridIndex": 2, "type": "category", "data": ["Q1", "Q2", "Q3", "Q4"] },
+    { "gridIndex": 3, "type": "category", "data": ["Q1", "Q2", "Q3", "Q4"] }
+  ],
+  "yAxis": [
+    { "gridIndex": 0, "type": "value" }, { "gridIndex": 1, "type": "value" },
+    { "gridIndex": 2, "type": "value" }, { "gridIndex": 3, "type": "value" }
+  ],
+  "series": [
+    { "name": "Northwind", "type": "bar", "xAxisIndex": 0, "yAxisIndex": 0, "data": [21504, 23100, 24800, 26200] },
+    { "name": "Acme", "type": "bar", "xAxisIndex": 1, "yAxisIndex": 1, "data": [13824, 14100, 13600, 15200] },
+    { "name": "Fabrikam", "type": "bar", "xAxisIndex": 2, "yAxisIndex": 2, "data": [9728, 9400, 9100, 9900] },
+    { "name": "Contoso", "type": "bar", "xAxisIndex": 3, "yAxisIndex": 3, "data": [6144, 6300, 6800, 7100] }
+  ]
+}
+```
+
+### Nested/concentric pie (category, then sub-category)
+
+```chart
+{
+  "tooltip": {},
+  "series": [
+    {
+      "type": "pie",
+      "radius": ["0%", "35%"],
+      "label": { "position": "inner" },
+      "data": [
+        { "name": "Apparel", "value": 20500 }, { "name": "Home", "value": 10300 }, { "name": "Electronics", "value": 19100 }
+      ]
+    },
+    {
+      "type": "pie",
+      "radius": ["45%", "70%"],
+      "data": [
+        { "name": "Jacket", "value": 12400 }, { "name": "Boots", "value": 8100 },
+        { "name": "Lamp", "value": 6200 }, { "name": "Rug", "value": 4100 },
+        { "name": "Headphones", "value": 15800 }, { "name": "Charger", "value": 3300 }
+      ]
+    }
+  ]
+}
+```
+
+### Timeline (animated bar race across periods)
+
+```chart
+{
+  "baseOption": {
+    "tooltip": {},
+    "xAxis": { "type": "value" },
+    "yAxis": { "type": "category", "data": ["Contoso", "Fabrikam", "Acme", "Northwind"] },
+    "series": [{ "type": "bar", "data": [6144, 9728, 13824, 21504] }]
+  },
+  "timeline": {
+    "axisType": "category",
+    "autoPlay": true,
+    "playInterval": 1500,
+    "data": ["Q1", "Q2", "Q3", "Q4"]
+  },
+  "options": [
+    { "series": [{ "data": [4800, 8200, 11200, 17400] }] },
+    { "series": [{ "data": [5300, 8700, 12300, 18900] }] },
+    { "series": [{ "data": [5900, 9200, 12900, 20100] }] },
+    { "series": [{ "data": [6144, 9728, 13824, 21504] }] }
+  ]
+}
+```
+
 Not covered: ECharts' `custom` series (`renderItem`) needs a JavaScript
 *function* to draw each data point — there's no JSON representation of a
 function, so it can't be expressed in a fence at all without breaking the

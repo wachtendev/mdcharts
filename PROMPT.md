@@ -94,6 +94,18 @@ the series, no extra setup:
 - `markPoint: { data: [{ type: "max", name: "peak" }] }` — call out a specific point.
 - `markArea: { data: [[{ xAxis: "Apr" }, { xAxis: "Jun" }]] }` — shade a range.
 
+### Compositions — same types, different layout
+
+These aren't separate chart types, just standard ECharts `option` fields
+combined a particular way — see `demo/all-charts.md` for a worked example of
+each:
+
+- **Dual Y-axis**: `yAxis` as an array of two, series pick one via `yAxisIndex`.
+- **Waterfall**: two stacked `bar` series (`stack`), the base one's `itemStyle.color: "transparent"`.
+- **Small multiples**: `grid` as an array of positioned boxes, `xAxis`/`yAxis` as arrays with `gridIndex`, each series picks its grid via `xAxisIndex`/`yAxisIndex`.
+- **Nested/concentric pie**: two `pie` series with non-overlapping `radius` ranges.
+- **Timeline (bar race)**: top-level `{ "baseOption": {...}, "timeline": { "data": [...] }, "options": [...] }` instead of a plain `option` — `options[i]` is merged over `baseOption` for timeline step `i`.
+
 ## A single number — a ```statcard fence
 
 For one KPI (a value, a label, maybe a comparison), don't build a table row —
