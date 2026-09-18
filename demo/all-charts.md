@@ -502,22 +502,27 @@ more `::: card` blocks in `::: cards` for that; each stays full-width when
 the panel is narrow and lines up in a row once there's room, same as the
 stat cards' own layout.
 
+A gauge or pie squeezed into a small card needs a couple of adjustments a
+full-width one doesn't: shorter tick marks and a `detail` offset so the
+gauge's dial doesn't cross its own number, and a legend instead of leader-line
+labels on a pie so a longer name doesn't clip.
+
 :::: cards
 ::: card On-time rate
 ```chart
-{ "series": [{ "type": "gauge", "data": [{ "value": 94 }], "detail": { "formatter": "{value}%" } }] }
+{ "series": [{ "type": "gauge", "startAngle": 180, "endAngle": 0, "center": ["50%", "70%"], "radius": "95%", "progress": { "show": true, "width": 10 }, "axisLine": { "lineStyle": { "width": 10 } }, "pointer": { "show": false }, "axisTick": { "show": false }, "splitLine": { "length": 6 }, "axisLabel": { "distance": -18, "fontSize": 9 }, "data": [{ "value": 94 }], "detail": { "offsetCenter": [0, "-15%"], "formatter": "{value}%" } }] }
 ```
 :::
 
 ::: card Checkout funnel
 ```chart
-{ "series": [{ "type": "funnel", "data": [{ "name": "Viewed", "value": 18400 }, { "name": "Added to cart", "value": 6200 }, { "name": "Paid", "value": 2480 }] }] }
+{ "series": [{ "type": "funnel", "data": [{ "name": "Viewed", "value": 18400 }, { "name": "Paid", "value": 2480 }] }] }
 ```
 :::
 
 ::: card Traffic split
 ```chart
-{ "series": [{ "type": "pie", "radius": ["40%", "70%"], "data": [{ "name": "Organic", "value": 62 }, { "name": "Paid", "value": 38 }] }] }
+{ "legend": { "bottom": 0 }, "series": [{ "type": "pie", "radius": ["40%", "65%"], "label": { "show": false }, "data": [{ "name": "Organic", "value": 62 }, { "name": "Paid", "value": 38 }] }] }
 ```
 :::
 ::::
@@ -530,13 +535,13 @@ plain one, no headline:
 :::: cards 1:1
 ::: card Repeat purchase rate
 ```chart
-{ "series": [{ "type": "gauge", "data": [{ "value": 38 }], "detail": { "formatter": "{value}%" } }] }
+{ "series": [{ "type": "gauge", "startAngle": 180, "endAngle": 0, "center": ["50%", "70%"], "radius": "95%", "progress": { "show": true, "width": 10 }, "axisLine": { "lineStyle": { "width": 10 } }, "pointer": { "show": false }, "axisTick": { "show": false }, "splitLine": { "length": 6 }, "axisLabel": { "distance": -18, "fontSize": 9 }, "data": [{ "value": 38 }], "detail": { "offsetCenter": [0, "-15%"], "formatter": "{value}%" } }] }
 ```
 :::
 
 ::: card
 ```chart
-{ "series": [{ "type": "pie", "radius": ["40%", "70%"], "data": [{ "name": "New", "value": 55 }, { "name": "Returning", "value": 45 }] }] }
+{ "legend": { "bottom": 0 }, "series": [{ "type": "pie", "radius": ["40%", "65%"], "label": { "show": false }, "data": [{ "name": "New", "value": 55 }, { "name": "Returning", "value": 45 }] }] }
 ```
 :::
 ::::
@@ -556,7 +561,7 @@ plain one, no headline:
 
 ::: card Share of total
 ```chart
-{ "series": [{ "type": "pie", "radius": ["40%", "70%"], "data": [{ "name": "Northwind", "value": 42 }, { "name": "Rest", "value": 58 }] }] }
+{ "legend": { "bottom": 0 }, "series": [{ "type": "pie", "radius": ["40%", "65%"], "label": { "show": false }, "data": [{ "name": "Northwind", "value": 42 }, { "name": "Rest", "value": 58 }] }] }
 ```
 :::
 ::::
@@ -566,19 +571,19 @@ plain one, no headline:
 :::: cards 3
 ::: card Orders
 ```chart
-{ "series": [{ "type": "gauge", "data": [{ "value": 1205 }], "min": 0, "max": 1500 }] }
+{ "series": [{ "type": "gauge", "startAngle": 180, "endAngle": 0, "center": ["50%", "70%"], "radius": "95%", "progress": { "show": true, "width": 10 }, "axisLine": { "lineStyle": { "width": 10 } }, "pointer": { "show": false }, "axisTick": { "show": false }, "splitLine": { "length": 6 }, "axisLabel": { "distance": -18, "fontSize": 9 }, "data": [{ "value": 1205 }], "min": 0, "max": 1500, "detail": { "offsetCenter": [0, "-15%"] } }] }
 ```
 :::
 
 ::: card Returns
 ```chart
-{ "series": [{ "type": "gauge", "data": [{ "value": 24 }], "min": 0, "max": 50 }] }
+{ "series": [{ "type": "gauge", "startAngle": 180, "endAngle": 0, "center": ["50%", "70%"], "radius": "95%", "progress": { "show": true, "width": 10 }, "axisLine": { "lineStyle": { "width": 10 } }, "pointer": { "show": false }, "axisTick": { "show": false }, "splitLine": { "length": 6 }, "axisLabel": { "distance": -18, "fontSize": 9 }, "data": [{ "value": 24 }], "min": 0, "max": 50, "detail": { "offsetCenter": [0, "-15%"] } }] }
 ```
 :::
 
 ::: card Failed payments
 ```chart
-{ "series": [{ "type": "gauge", "data": [{ "value": 3 }], "min": 0, "max": 20 }] }
+{ "series": [{ "type": "gauge", "startAngle": 180, "endAngle": 0, "center": ["50%", "70%"], "radius": "95%", "progress": { "show": true, "width": 10 }, "axisLine": { "lineStyle": { "width": 10 } }, "pointer": { "show": false }, "axisTick": { "show": false }, "splitLine": { "length": 6 }, "axisLabel": { "distance": -18, "fontSize": 9 }, "data": [{ "value": 3 }], "min": 0, "max": 20, "detail": { "offsetCenter": [0, "-15%"] } }] }
 ```
 :::
 ::::
