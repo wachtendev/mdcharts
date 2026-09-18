@@ -34,6 +34,23 @@ export class MdDetailPanel extends HTMLElement {
     closeBtn.innerHTML = '&times;'
     closeBtn.addEventListener('click', () => this.close())
 
+    const downloadBtn = document.createElement('button')
+    downloadBtn.className = 'mdchart-panel-download'
+    downloadBtn.type = 'button'
+    downloadBtn.setAttribute('aria-label', 'Download as PDF')
+    downloadBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>'
+    // The browser's own print dialog, not a bundled PDF library: every
+    // browser's "Save as PDF" destination already does this correctly,
+    // including real selectable text and vector-quality chart canvases.
+    // Scope the "hide everything else" rule to only while this is open
+    // (see styles.css) rather than a blanket @media print, so a host page
+    // printing itself some other way is never affected by this component.
+    downloadBtn.addEventListener('click', () => {
+      document.body.classList.add('mdchart-printing')
+      window.print()
+    })
+    window.addEventListener('afterprint', () => document.body.classList.remove('mdchart-printing'))
+
     if (!this.querySelector('md-chart-view')) {
       this.view = document.createElement('md-chart-view') as MdChartView
       this.appendChild(this.view)
@@ -41,7 +58,7 @@ export class MdDetailPanel extends HTMLElement {
       this.view = this.querySelector('md-chart-view') as MdChartView
     }
 
-    this.prepend(closeBtn)
+    this.prepend(downloadBtn, closeBtn)
     document.body.appendChild(this.backdrop)
 
     this.addEventListener('keydown', this.onKeydown)

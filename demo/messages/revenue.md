@@ -11,6 +11,7 @@ Revenue is up **8.1%** this month and ahead of target — Northwind is carrying 
 ]
 ```
 
+::: card Revenue vs. target
 ```chart
 {
   "type": "line",
@@ -32,12 +33,13 @@ Revenue is up **8.1%** this month and ahead of target — Northwind is carrying 
   }
 }
 ```
+:::
 
-## Revenue share by shop
-
+::: card Revenue share by shop
 ```chart
 { "type": "doughnut", "data": { "labels": ["Northwind", "Acme", "Fabrikam", "Contoso"], "datasets": [{ "data": [42, 27, 19, 12] }] } }
 ```
+:::
 
 ## Per-shop progress vs. last month
 

@@ -104,6 +104,28 @@ use a stat card instead:
   still needs to read as urgent — a plain alert count, not a trend.
 - Full schema: `schemas/statcard.schema.json`.
 
+## Wrapping something in a card — `::: card Title`
+
+To give a chart (or a table, or anything else) its own bordered card with a
+headline — for a report made of several distinct sections rather than one
+long scroll:
+
+```
+::: card Revenue vs. target
+```chart
+{ "type": "line", "data": { ... } }
+```
+:::
+```
+
+- The title is optional — `::: card` on its own still wraps the content in a
+  card, just without a header row.
+- Put whatever you like inside: a chart, a table, prose, more than one of
+  those. It's a wrapper, not a special content type.
+- Don't use this as a substitute for a `##` heading on a report with only one
+  section — reach for it when you're presenting more than one distinct block
+  and want each visually separated, the way the stat cards already look.
+
 ## Status tables — just write a normal markdown table
 
 No special syntax. Two things happen automatically:

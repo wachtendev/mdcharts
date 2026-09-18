@@ -1,4 +1,4 @@
-import { ensureChartType, UnknownChartTypeError } from './registry.ts'
+import { ensureChartType, resolveLocalPlugins, UnknownChartTypeError } from './registry.ts'
 import { resolvePalette, categoricalColor, sequentialScale, readableTextOn, type BrandPalette } from './theme.ts'
 
 const VALUE_COLORED_TYPES = new Set(['treemap', 'matrix', 'choropleth', 'bubbleMap'])
@@ -231,7 +231,19 @@ async function mountOne(container: HTMLElement) {
         }
       }
     }
-    const Chart = await ensureChartType(config.type, collectPluginKeys(config))
+    const requestedPluginKeys = collectPluginKeys(config)
+    const [Chart, localPlugins] = await Promise.all([
+      ensureChartType(config.type, requestedPluginKeys),
+      resolveLocalPlugins(requestedPluginKeys),
+    ])
+    // Real plugin objects (annotation, datalabels, zoom, gradient, dragData)
+    // go in config.plugins -- LOCAL to this chart instance only, never
+    // through Chart.register(), so they can never run against a chart that
+    // didn't ask for them. See registry.ts's LOCAL_PLUGIN_LOADERS for why
+    // that matters (a real chartjs-plugin-annotation bug, #909 and variants,
+    // throws when its hooks run against a chart it wasn't set up for).
+    if (localPlugins.length) config.plugins = [...(config.plugins ?? []), ...localPlugins]
+
     const palette = resolvePalette(container)
     const strictBrand = config.options?.mdchartStrictBrand !== false
     if (strictBrand) applyStrictBrandColors(config, palette)
@@ -251,15 +263,24 @@ async function mountOne(container: HTMLElement) {
       // ResizeObserver fires once immediately on observe(), reporting the
       // current size even though nothing has changed yet -- Chart.js has
       // already sized itself correctly at construction, and calling
-      // resize() again this early races some plugins' own init lifecycle
-      // (chartjs-plugin-annotation throws reading a still-unset internal
-      // state if a resize lands before its own beforeInit/afterUpdate
-      // hooks finish -- see chartjs/chartjs-plugin-annotation#909). Skip
-      // that first, redundant callback.
+      // resize() again this early races some plugins' own init lifecycle.
+      // Skip that first, redundant callback.
       let firstCallback = true
       resizeObserver = new ResizeObserver(() => {
         if (firstCallback) { firstCallback = false; return }
-        instance.resize()
+        try {
+          instance.resize()
+        } catch (err) {
+          // chartjs-plugin-annotation has a real, reproducible bug where a
+          // resize can land while its own per-chart state isn't ready and
+          // throw (chartjs/chartjs-plugin-annotation#909) -- and because
+          // Chart.js runs every chart's update/draw through one shared
+          // loop, an uncaught throw here can silently break *other*,
+          // unrelated charts on the page too, not just this one. There's no
+          // fix on our end for the plugin's own bug; contain the blast
+          // radius instead of letting it cascade.
+          console.error('mdchart: chart resize failed (continuing, other charts are unaffected):', err)
+        }
       })
       resizeObserver.observe(container)
     }

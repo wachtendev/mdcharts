@@ -58,6 +58,32 @@
 .mdchart-callout-title { font-weight: 600; font-size: 0.9rem; }
 .mdchart-callout-content { color: var(--mdchart-text-muted); font-size: 0.92rem; }
 
+/* --- card: a `::: card Title` container wrapping a chart, table, or any
+   other block content in a bordered card with a headline. --- */
+.mdchart-card {
+  border: 1px solid var(--mdchart-grid);
+  border-radius: 10px;
+  margin: 1.25em 0;
+  overflow: hidden;
+  background: var(--mdchart-surface);
+}
+.mdchart-card-head {
+  padding: 0.7em 1em;
+  border-bottom: 1px solid var(--mdchart-grid);
+  font-weight: 600;
+  font-size: 0.92em;
+}
+.mdchart-card-body {
+  padding: 1em 1.1em;
+}
+.mdchart-card-body .mdchart-chart,
+.mdchart-card-body .mdchart-statcards,
+.mdchart-card-body .mdchart-table-wrap {
+  margin: 0;
+}
+.mdchart-card-body > :first-child { margin-top: 0; }
+.mdchart-card-body > :last-child { margin-bottom: 0; }
+
 /* --- tables: the primary status/report surface --- */
 .mdchart-table {
   width: 100%;
@@ -200,21 +226,53 @@
   flex: 1;
 }
 
-.mdchart-panel-close {
+.mdchart-panel-close,
+.mdchart-panel-download {
   position: absolute;
   top: 1rem;
-  right: 1rem;
   width: 28px;
   height: 28px;
   border: none;
   background: transparent;
   color: var(--mdchart-text-muted);
-  font-size: 1.3rem;
   line-height: 1;
   cursor: pointer;
   border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.mdchart-panel-close:hover { background: var(--mdchart-panel); color: var(--mdchart-text); }
+.mdchart-panel-close { right: 1rem; font-size: 1.3rem; }
+.mdchart-panel-download { right: 3rem; }
+.mdchart-panel-download svg { width: 16px; height: 16px; }
+.mdchart-panel-close:hover, .mdchart-panel-download:hover { background: var(--mdchart-panel); color: var(--mdchart-text); }
+
+/* Only active while the panel's own download button triggers window.print()
+   (see panel.ts) -- never a blanket @media print, so a host page printing
+   itself some other way is unaffected by this component being on the page. */
+@media print {
+  body.mdchart-printing > :not(.mdchart-panel) { display: none !important; }
+  body.mdchart-printing .mdchart-panel {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+  }
+  body.mdchart-printing .mdchart-panel-close,
+  body.mdchart-printing .mdchart-panel-download,
+  body.mdchart-printing .mdchart-panel-backdrop {
+    display: none !important;
+  }
+  body.mdchart-printing .mdchart-panel md-chart-view {
+    overflow: visible !important;
+    height: auto !important;
+  }
+}
 
 .mdchart-panel-backdrop {
   position: fixed;

@@ -45,6 +45,7 @@
     "chartjs-plugin-trendline": "^3.2.13",
     "chartjs-plugin-zoom": "^2.2.0",
     "date-fns": "^4.4.0",
+    "markdown-it-container": "^4.0.0",
     "markdown-it-deflist": "^4.0.0",
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-mathjax3": "^5.2.0",
@@ -54,6 +55,9 @@
     "world-atlas": "^2.0.2"
   },
   "peerDependenciesMeta": {
+    "markdown-it-container": {
+      "optional": true
+    },
     "shiki": {
       "optional": true
     },
@@ -168,6 +172,7 @@
     "chartjs-plugin-zoom": "^2.2.0",
     "date-fns": "^4.4.0",
     "jsdom": "^30.0.1",
+    "markdown-it-container": "^4.0.0",
     "markdown-it-deflist": "^4.0.0",
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-mathjax3": "^5.2.0",

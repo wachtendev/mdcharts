@@ -105,16 +105,32 @@ const TYPE_LOADERS: Record<string, Registrar> = {
   },
 }
 
-// Plugins register themselves off an `options.plugins.<key>` key present in
-// the config, so a chart pulls in only what it actually uses.
-const PLUGIN_LOADERS: Record<string, Registrar> = {
-  datalabels: async () => getChart().register((await import('chartjs-plugin-datalabels')).default),
-  annotation: async () => getChart().register((await import('chartjs-plugin-annotation')).default),
-  zoom: async () => getChart().register((await import('chartjs-plugin-zoom')).default),
+// Real Chart.js plugin OBJECTS (they export lifecycle hooks -- beforeUpdate,
+// afterDraw, event handlers) get resolved here and passed into a chart's own
+// `config.plugins` array (see resolveLocalPlugins/chart.ts), never through
+// `Chart.register()`. A globally-registered plugin's hooks fire on *every*
+// chart on the page, not just the ones that opted in via
+// `options.plugins.<key>` -- chartjs-plugin-annotation in particular throws
+// when its hooks run against a chart whose own per-chart state was never
+// initialized (see chartjs/chartjs-plugin-annotation#909 and its resize/
+// mouse-event variants), so a chart using it would corrupt every *other*
+// chart on the page too. Local registration makes that structurally
+// impossible instead of trying to opt back out per chart.
+const LOCAL_PLUGIN_LOADERS: Record<string, () => Promise<any>> = {
+  datalabels: async () => (await import('chartjs-plugin-datalabels')).default,
+  annotation: async () => (await import('chartjs-plugin-annotation')).default,
+  zoom: async () => (await import('chartjs-plugin-zoom')).default,
+  gradient: async () => (await import('chartjs-plugin-gradient')).default,
+  dragData: async () => (await import('chartjs-plugin-dragdata')).default,
+}
+
+// These two are opt-in by their own design already -- trendline only
+// activates per-dataset (`dataset.trendlineLinear`), hierarchical is a scale
+// *type* a chart must explicitly request (`scales.x.type: 'hierarchical'`) --
+// so the usual global-registration side effects are safe for them.
+const SIDE_EFFECT_PLUGIN_LOADERS: Record<string, Registrar> = {
   trendlineLinear: async () => { await import('chartjs-plugin-trendline') },
-  gradient: async () => getChart().register((await import('chartjs-plugin-gradient')).default),
   hierarchical: async () => { await import('chartjs-plugin-hierarchical') },
-  dragData: async () => getChart().register((await import('chartjs-plugin-dragdata')).default),
 }
 
 let chartModPromise: Promise<typeof ChartJS> | null = null
@@ -162,7 +178,7 @@ export async function ensureChartType(type: string, pluginKeys: string[] = []): 
   }
 
   for (const key of pluginKeys) {
-    const loader = PLUGIN_LOADERS[key]
+    const loader = SIDE_EFFECT_PLUGIN_LOADERS[key]
     if (loader && !registered.has(`plugin:${key}`)) {
       await loader()
       registered.add(`plugin:${key}`)
@@ -172,11 +188,33 @@ export async function ensureChartType(type: string, pluginKeys: string[] = []): 
   return Chart
 }
 
+const localPluginCache = new Map<string, Promise<any>>()
+
+/**
+ * Resolves the given plugin keys to actual plugin objects for a chart's own
+ * `config.plugins` array -- never through `Chart.register()`. See
+ * LOCAL_PLUGIN_LOADERS above for why: local registration only affects the
+ * one chart that asked for it, structurally, rather than needing every other
+ * chart to opt back out.
+ */
+export async function resolveLocalPlugins(pluginKeys: string[]): Promise<any[]> {
+  const resolved = await Promise.all(
+    pluginKeys
+      .filter((key) => key in LOCAL_PLUGIN_LOADERS)
+      .map((key) => {
+        if (!localPluginCache.has(key)) localPluginCache.set(key, LOCAL_PLUGIN_LOADERS[key]())
+        return localPluginCache.get(key)!
+      }),
+  )
+  return resolved.filter(Boolean)
+}
+
 /** Escape hatch: eager-load every known extension type and plugin. */
 export async function registerAll(): Promise<void> {
   await loadChart()
   await Promise.all([
     ...Object.keys(TYPE_LOADERS).map((t) => ensureChartType(t)),
-    ...Object.keys(PLUGIN_LOADERS).map((k) => ensureChartType('bar', [k])),
+    ...Object.keys(SIDE_EFFECT_PLUGIN_LOADERS).map((k) => ensureChartType('bar', [k])),
+    resolveLocalPlugins(Object.keys(LOCAL_PLUGIN_LOADERS)),
   ])
 }

@@ -25,6 +25,22 @@ async function ensureExtras() {
       import('markdown-it-task-lists').then((m) => md.use(m.default, { enabled: true })),
       import('markdown-it-deflist').then((m) => md.use(m.default)),
       import('markdown-it-mathjax3').then((m) => md.use(m.default)),
+      import('markdown-it-container').then((m) => md.use(m.default, 'card', {
+        // `::: card Optional title` -- a bordered card wrapping whatever
+        // markdown sits inside it (a chart fence, a table, prose), matching
+        // the same visual language as the chat's brief cards. The one thing
+        // a fence can't do is wrap *other* block content with a heading;
+        // this container fills that gap.
+        validate: (params: string) => /^card\s*(.*)$/.test(params.trim()),
+        render(tokens: any[], idx: number) {
+          if (tokens[idx].nesting === 1) {
+            const title = tokens[idx].info.trim().replace(/^card\s*/, '').trim()
+            const head = title ? `<div class="mdchart-card-head">${md.utils.escapeHtml(title)}</div>` : ''
+            return `<div class="mdchart-card">${head}<div class="mdchart-card-body">\n`
+          }
+          return '</div></div>\n'
+        },
+      })),
     ])
   })()
   return extras
